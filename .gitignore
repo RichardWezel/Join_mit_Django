@@ -1,0 +1,7 @@
+# Ignoriere das .env-File (Umgebungsvariablen)
+.env
+
+# Die auf dem Server gespeicherten Daten
+contacts.json
+tasks.json
+users.json
