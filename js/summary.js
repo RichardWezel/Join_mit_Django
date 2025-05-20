@@ -47,9 +47,9 @@ async function greeting() {
     let text = document.getElementById('good_morning_text');
     let user = document.getElementById('user_name_first')
     summary_container.style.display = 'none';
-    await getCurrentUserFromServer();
-    await getCurrentUserIdFromServer();
-    if (currentUserId == 999) {
+    await getCurrentUserOfServer();
+    await saveCurrentUserIdOnServer();
+    if (currentUserId == 1) {
       text.innerHTML = 'Good morning!';
     } else {
       text.innerHTML = 'Good morning,';
@@ -75,8 +75,8 @@ function timeout(ms) {
  */
 async function loadServerData() {
   await getContactsFromServer();
-  await getTasksFromServer();
-  await getCurrentUserIdFromServer();
+  await getTasksOfServer();
+  await getCurrentUserOfServer();
 }
 
 function calcValuesOfSummery() {
@@ -92,7 +92,7 @@ async function copyTasksArray() {
 
 async function changeDateFormatOfTasks() {
   tasks_summery = tasks.map((task) => {
-    let [DD, MM, YY] = task.dueDate.split("/");
+    let [DD, MM, YY] = task.due_date.split("/");
     return { ...task, dueDate: new Date(`20${YY}-${MM}-${DD}`) };
   });
 }
@@ -165,21 +165,30 @@ function renderAwaitingFeedbackAmount() {
 }
 
 function getNextDueDate() {
-  let tasksNotDone = tasks.filter((task) => task.status != "done").sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  let tasksNotDone = tasks
+    .filter(task => task.status !== "done")
+    .map(task => {
+      let [day, month, year] = task.due_date.split('/');
+      return {
+        ...task,
+        parsedDate: new Date(`20${year}-${month}-${day}`) // Format YYYY-MM-DD
+      };
+    })
+    .sort((a, b) => a.parsedDate - b.parsedDate);
 
-  // Überprüfen, ob das Array tasksNotDone leer ist
   if (tasksNotDone.length > 0) {
-    let parsedValue = new Date(tasksNotDone[0].dueDate); // Konvertiert das Datum in das richtige Format
     nextDueDate = new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
-    }).format(parsedValue);
+    }).format(tasksNotDone[0].parsedDate);
+
     return nextDueDate;
   } else {
     return "Keine ausstehenden Aufgaben gefunden.";
   }
 }
+
 
 function renderNextDueDate() {
   let nextDueDateElement = document.getElementById("next_due_date");
@@ -202,10 +211,10 @@ function renderUrgentAmount() {
 
 function renderUserName() {
   let userNameElement = document.getElementById("user_name");
-  if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser[0] == '' || currentUser == 999) {
+  if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser[0] == '' || currentUserId == 1) {
     userNameElement.innerHTML = `Guest`;
-  } else if (typeof currentUser.name.secondName == "undefined") {
-    let firstName = currentUser.name.firstName;
+  } else if (typeof currentUser.secondName == "undefined") {
+    let firstName = currentUser.firstName;
     userNameElement.innerHTML = `${firstName}`; 
   } else {
     userNameElement.innerHTML = `${currentUser.name.firstName} ${currentUser.name.secondName}`;

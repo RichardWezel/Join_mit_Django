@@ -5,3 +5,18 @@
 contacts.json
 tasks.json
 users.json
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtuelle Umgebung
+venv/
+.venv/
+
+# Datenbanken (falls SQLite benutzt wird)
+*.sqlite3
+
+# VSCode-Einstellungen (optional)
+.vscode/

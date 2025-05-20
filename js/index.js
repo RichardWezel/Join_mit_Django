@@ -1,11 +1,4 @@
-/**
- * Input-element "mail"
- */
 let mail = document.getElementById("mail");
-
-/**
- * Input-element "password"
- */
 let password = document.getElementById("password");
 
 /**
@@ -50,8 +43,8 @@ async function checkExistingUser() {
 async function loadUsers() {
   try {
     let ServerData;
-    ServerData = await getItem("users");
-    let newData = JSON.parse(ServerData.data.value);
+    ServerData = await getUsersFromServer();
+    let newData = ServerData.data;
     users = JSON.parse(JSON.stringify(newData));
   } catch (e) {
     console.warn("Could not load users!");
@@ -122,21 +115,15 @@ async function setNewLogIn_status() {
  *
  */
 async function handleGuestLogIn() {
-  currentUser = {
-    name: { firstName: "Guest", secondName: "", color: "#ff4646" },
-    mail: "",
-    password: "",
-    lockedIn: true,
-  };
-  await saveCurrentUserOnServer();
-  await getCurrentUserFromServer();
-  currentUser = 999;
-  await saveCurrentUserOnServer();
-  await getCurrentUserFromServer();
-  currentUserId = 999;
-  await saveCurrentUserIdOnServer();
-  await getCurrentUserIdFromServer();
+  await setCurrentUserToGuest()
   window.location.href = "summary.html";
+}
+
+async function setCurrentUserToGuest() {
+  currentUserId = 1;
+  await saveCurrentUserIdOnServer();
+  currentUser = await getUserById(currentUserId);
+  console.log('currentUser: ', currentUser);
 }
 
 /* Toast Message */

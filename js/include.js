@@ -1,5 +1,5 @@
 /**
- * Includes templates on the site.
+ * Includes templates on the site as sidebar.
  */
 async function includeHTML() {
   let includeElements = document.querySelectorAll("[template-src]");
@@ -31,22 +31,21 @@ function setActiveLink() {
 }
 
 /**
- * Sets the innitials of logged account in the head navbar in the top right corner.
+ * Sets the initials of logged account in the head navbar in the top right corner.
  * currentUser is an Array in storage.js.
  */
 async function setUserInitialsAtHeader() {
-  await getCurrentUserFromServer();
   let accountLogo = document.getElementById('navbarHeadIcon');
-  if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser == '' || currentUser == 999) {
+  if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser == '' || currentUserId == 1) {
     accountLogo.innerHTML = 'G';
-  } else if (typeof currentUser.name.secondName == "undefined" || typeof currentUser.name.secondName == '') {
-    let firstName = currentUser.name.firstName;
+  } else if (typeof currentUser.secondName == "undefined" || typeof currentUser.name.secondName == '') {
+    let firstName = currentUser.firstName;
     firstName = firstName.charAt(0);
     accountLogo.innerHTML = `${firstName}`;
   } else {
-    let firstName = currentUser.name.firstName;
+    let firstName = currentUser.firstName;
     firstName = firstName.charAt(0);
-    let secondName = currentUser.name.secondName;
+    let secondName = currentUser.secondName;
     secondName = secondName.charAt(0);
     accountLogo.innerHTML = `${firstName} ${secondName}`;
   }
