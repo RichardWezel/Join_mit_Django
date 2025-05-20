@@ -154,17 +154,19 @@ async function getTasksOfServer() {
   return data;
 }
 
-async function savesTasksOnServer() {
-  const url = `http://127.0.0.1:8000/api/tasks/`;
+async function savesTasksOnServer(taskId) {
+  const url = `http://127.0.0.1:8000/api/tasks/${taskId}/`;
+  const taskData = tasks[taskId];
+
   return fetch(url, {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(tasks),
+    body: JSON.stringify(taskData),
   }).then(res => {
     if (!res.ok) {
-      throw new Error(`Error while saving the tasks: ${res.status}`);
+      throw new Error(`Error while saving the task: ${res.status}`);
     }
     return res.json();
   });
@@ -226,9 +228,9 @@ function sortTasksContacts() {
 /**
  * Saves and loads the tasks to and from server.
  */
-async function setAndGetToServer() {
-  await setTasksToServer();
-  await getTasksOfBackend();
+async function setAndGetToServer(taskId) {
+  await savesTasksOnServer(taskId);
+  await getTasksOfServer();
 }
 
 

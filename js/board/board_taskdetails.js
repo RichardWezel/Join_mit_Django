@@ -241,8 +241,9 @@ function renderSubtasksDialog(taskId){
         container.innerHTML = '';
         for (let j = 0; j < tasks[taskId].subtasks.length; j++) {
             let subtask = tasks[taskId].subtasks[j];
+            let subtaskId = subtask.id; // WICHTIG: das ist die ID aus dem Backend
             container.innerHTML += subtaskDialogHTML(taskId, j, subtask.name);
-            renderSubtaskImage(taskId, j);
+            renderSubtaskImage(taskId, j, subtaskId);
         }
     }
 }
@@ -270,36 +271,48 @@ function subtaskDialogHTML(taskId, subtaskId, subtaskContent) {
  * @param {Number} taskId - Index of current called task in tasks[] global array.
  * @param {Number} subtaskId - Index of current subtask
  */
-async function changeSubtaskStatus(taskId, subtaskId) {
-    let subtaskStatus = tasks[taskId].subtasks[subtaskId].done;
-    if (subtaskStatus == true) {
-        tasks[taskId].subtasks[subtaskId].done = false;
-    } else {
-        tasks[taskId].subtasks[subtaskId].done = true;
+async function changeSubtaskStatus(taskId, subtaskIndex) {
+    const subtask = tasks[taskId].subtasks[subtaskIndex];
+    const subtaskId = subtask.id;
+    const updatedStatus = !subtask.done;
+
+    const url = `http://127.0.0.1:8000/api/subtasks/${subtaskId}/`;
+
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ done: updatedStatus }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Fehler beim Aktualisieren:", err);
+      return;
     }
-    await setAndGetToServer();
+
+    subtask.done = updatedStatus;
     renderSubtasksDialog(taskId);
     renderSubtaskAmounts(taskId);
 }
 
+  
 /**
  * Changes the checkbox image depending on status.
  * 
  * @param {Number} taskId - Index of current called task in tasks[] global array.
  * @param {Number} subtaskId - Index of current subtask
  */
-function renderSubtaskImage(taskId, subtaskId) {
-    let container = document.getElementById(`subtask_status_img${taskId}${subtaskId}`)
-    let status = tasks[taskId].subtasks[subtaskId].done;
-    switch (status) {
-        case true:
-          container.innerHTML = `<a class="checkbox1" onclick="changeSubtaskStatus(${taskId}, ${subtaskId})"><img src="assets/img/check_button_checked.svg"></a>`;
-          break;
-        case false:
-            container.innerHTML = `<a class="checkbox1" onclick="changeSubtaskStatus(${taskId}, ${subtaskId})"><img src="assets/img/check_button_unchecked.svg"></a>`;
-          break;
-    }
+function renderSubtaskImage(taskId, subtaskIndex) {
+    let container = document.getElementById(`subtask_status_img${taskId}${subtaskIndex}`);
+    let status = tasks[taskId].subtasks[subtaskIndex].done;
+
+    const icon = status
+      ? "check_button_checked.svg"
+      : "check_button_unchecked.svg";
+
+    container.innerHTML = `<a class="checkbox1" onclick="changeSubtaskStatus(${taskId}, ${subtaskIndex})"><img src="assets/img/${icon}"></a>`;
 }
+
 
 /**
  * Deletes task frome the board.

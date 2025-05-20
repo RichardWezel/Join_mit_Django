@@ -28,7 +28,7 @@ function markAddableColumns(status) {
  */
 async function moveTo(status) {
     tasks[currentDraggedElement].status = status;
-    await setAndGetToServer();
+    await setAndGetToServer(currentDraggedElement);
     deleteBorderStyles();
     init_board();
 }
