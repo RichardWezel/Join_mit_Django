@@ -7,6 +7,7 @@ let contacts_global = [];
 let currentUser = [];
 let currentUserId = '';
 let users = [];
+let newTask_status = false;
 
 // ***** user ***** //
 
@@ -115,7 +116,7 @@ async function getCurrentUserIdFromServer() {
  * @returns res.json()
  */
 async function saveCurrentUserIdOnServer() {
-  const url = `http://127.0.0.1:8000/api/current_user/1/`; // feste ID (1)
+  const url = `http://127.0.0.1:8000/api/current_user/1/`;
 
   if (typeof currentUserId !== "number") {
     console.error("Invalid currentUserId:", currentUserId);
@@ -123,7 +124,7 @@ async function saveCurrentUserIdOnServer() {
   }
 
   return fetch(url, {
-    method: "PATCH", // PATCH ist semantisch besser für Teilupdates
+    method: "PATCH", 
     headers: {
       "Content-Type": "application/json"
     },
@@ -291,30 +292,50 @@ function sortContacts() {
 
 // ***** newTAsk status ***** //
 
-/**
- * Variable to mark the status of task when the user uses the column addTask buttons to add the new task a certain column.
- */
-let newTask_status = false;
 
 /**
  * Load the tasks JSON Array from Server in tasks[]
  */
 async function getNewTask_statusFromServer() {
-  try {
-    // Hier warten wir auf das Ergebnis der asynchronen getItem-Funktion
-    const ServerData = await getItem("newTask_status");
-    // Wir extrahieren den Wert aus dem Ergebnis und setzen newTask_status
-    newTask_status = JSON.parse(ServerData.data.value);
-  } catch (e) {
-    console.warn("Could not load new task status!");
+  const url = `http://127.0.0.1:8000/api/task_status/`;
+  const res = await fetch(url);
+  const data = await res.json();
+  console.log('Received task_status from backend:', data); 
+  if (data.length === 0) {
+    console.warn('No task_status object found!');
+    return;
   }
+  newTask_status = data[0].status;
+  return newTask_status;
 }
 
 /**
  * Saves the new task status to server.
  */
-async function setNewTask_status_false() {
-  await setItem('newTask_status', 'false');
+async function saveNewTask_statusOnServer() {
+  const url = `http://127.0.0.1:8000/api/task_status/1/`;
+
+  if (typeof newTask_status !== "boolean") {
+    console.error("Invalid task_status:", newTask_status);
+    return;
+  }
+  return fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      status: newTask_status,
+    }),
+  }).then(res => {
+    if (!res.ok) {
+      return res.json().then(err => {
+        console.error("Backend error:", err);
+        throw new Error(`Error while saving the new_Task_status: ${res.status}`);
+      });
+    }
+    return res.json();
+  });
 }
 
 

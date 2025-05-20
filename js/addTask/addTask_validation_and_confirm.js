@@ -73,7 +73,7 @@ async function createNewTask() {
   await deleteNewTaskContent();
   await removeAllInputes();
   newTask_status = 'true';
-  await setItem('newTask_status', newTask_status);
+  await saveNewTask_statusOnServer();
   changeWindow();
 }
 

@@ -40,7 +40,7 @@ async function toastMessageNewTask() {
         await timeout (1300);
         await closeToast();
         newTask_status = 'false';
-        await setItem('newTask_status', newTask_status);
+        await saveNewTask_statusOnServer();
     }
 }
   
