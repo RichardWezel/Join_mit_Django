@@ -32,7 +32,7 @@ async function checkExistingUser() {
     if (user.mail == mail.value && user.password == password.value) {
       currentUser = JSON.parse(JSON.stringify(user));
       await saveCurrentUserOnServer();
-      await getCurrentUserFromServer();
+      await getCurrentUserIdFromServer();
     }
   }
 }
@@ -70,8 +70,8 @@ async function findIndexOfCurrentUserInContacts_Global() {
   await getContactsFromServer();
   let index = contacts_global.findIndex(
     (contact) =>
-      contact.name.firstName === currentUser.name.firstName &&
-      contact.name.secondName === currentUser.name.secondName
+      contact.first_name === currentUser.first_name &&
+      contact.second_name === currentUser.second_name
   );
   return index;
 }

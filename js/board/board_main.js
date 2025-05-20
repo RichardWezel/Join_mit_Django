@@ -20,10 +20,12 @@ let dialog_status = 'inactive';
  * Initialize rendering content of Kanban Board.
  */
 async function init_board() {
+    await getCurrentUserIdFromServer();
+    console.log('currentUserId is: ', currentUserId)
     await includeHTML();
     await setUserInitialsAtHeader(); // @include.js:39
-    await getTasksFromServer(); // @storage.js:56
-    await getCurrentUserIdFromServer();
+    await getTasksOfServer(); // @storage.js:56
+    await saveCurrentUserIdOnServer(); // @storage.js:56
     await renderColumnContent(); // @board_main_renderTasks.js:7
     await toastMessageNewTask(); 
 }

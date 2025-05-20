@@ -38,14 +38,14 @@ async function setUserInitialsAtHeader() {
   let accountLogo = document.getElementById('navbarHeadIcon');
   if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser == '' || currentUserId == 1) {
     accountLogo.innerHTML = 'G';
-  } else if (typeof currentUser.secondName == "undefined" || typeof currentUser.name.secondName == '') {
-    let firstName = currentUser.firstName;
+  } else if (typeof currentUser.second_name == "undefined" || typeof currentUser.second_name == '') {
+    let firstName = currentUser.first_name;
     firstName = firstName.charAt(0);
     accountLogo.innerHTML = `${firstName}`;
   } else {
-    let firstName = currentUser.firstName;
+    let firstName = currentUser.first_name;
     firstName = firstName.charAt(0);
-    let secondName = currentUser.secondName;
+    let secondName = currentUser.second_name;
     secondName = secondName.charAt(0);
     accountLogo.innerHTML = `${firstName} ${secondName}`;
   }

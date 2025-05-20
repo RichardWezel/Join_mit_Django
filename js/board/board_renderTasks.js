@@ -270,8 +270,8 @@ function renderInitialCirclesOfTaskMembers(taskId) {
     if (!task.contacts.length == 0) {
         for (let i = 0; i < task.contacts.length; i++) {
             let contact = task.contacts[i];
-            let firstCharacter = contact.firstName.charAt(0);
-            let secondCharacter = contact.secondName.charAt(0);
+            let firstCharacter = contact.first_name.charAt(0);
+            let secondCharacter = contact.second_name.charAt(0);
             let color = contact.color;
             if (i < 3) {
                 container.innerHTML += taskMemberHTML(firstCharacter, secondCharacter, taskId, i); 

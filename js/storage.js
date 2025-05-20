@@ -19,6 +19,18 @@ async function getUsersOfServer() {
   return data;
 }
 
+// async function getUsersFromServer() {
+
+//   try {
+//     let ServerData;
+//     ServerData = await getItem("users");
+//     let newData = JSON.parse(ServerData.data.value);
+//     users = newData;
+//   } catch (e) {
+//     console.warn("Could not load users!");
+//   }
+// }
+
 async function saveUserOnServer(userId, userData) {
   const url = `http://127.0.0.1:8000/api/users/${userId}/`;
   return fetch(url, {
@@ -76,6 +88,57 @@ async function deleteUser(userId) {
     console.error('Error deleting user:', err);
   }
   );
+}
+
+
+// ***** current_user ***** //
+
+
+/**
+ * Loads the currentUser from Server and save this in curentUser @storage.js.
+ * 
+ * @returns {JSON} - currentUser
+ */
+async function getCurrentUserIdFromServer() {
+  const url = `http://127.0.0.1:8000/api/current_user/`;
+  const res = await fetch(url);
+  const data = await res.json();
+  console.log('Received Current User Id from backend:', data); 
+  currentUserId = data[0].currentUserIndex;
+  return currentUserId;
+}
+
+/**
+ * Saves the currentUser data to server.
+ * 
+ * @param {Integer} current_userIndex 
+ * @returns res.json()
+ */
+async function saveCurrentUserIdOnServer() {
+  const url = `http://127.0.0.1:8000/api/current_user/1/`; // feste ID (1)
+
+  if (typeof currentUserId !== "number") {
+    console.error("Invalid currentUserId:", currentUserId);
+    return;
+  }
+
+  return fetch(url, {
+    method: "PATCH", // PATCH ist semantisch besser für Teilupdates
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      currentUserIndex: currentUserId,
+    }),
+  }).then(res => {
+    if (!res.ok) {
+      return res.json().then(err => {
+        console.error("Backend error:", err);
+        throw new Error(`Error while saving the current user: ${res.status}`);
+      });
+    }
+    return res.json();
+  });
 }
 
 
@@ -139,6 +202,34 @@ async function createNewTask(taskData) {
   });
 }
 
+/**
+ * Sorts the Contacts of the task from a-z.
+ */
+function sortTasksContacts() {
+  for (let i = 0; i < tasks.length; i++) {
+    tasks[i].contacts.sort((a, b) => {
+      let firstNameA = a.first_name.toLowerCase();
+      let firstNameB = b.first_name.toLowerCase();
+      
+      if (firstNameA < firstNameB) {
+        return -1;
+      }
+      if (firstNameA > firstNameB) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+}
+
+/**
+ * Saves and loads the tasks to and from server.
+ */
+async function setAndGetToServer() {
+  await setTasksToServer();
+  await getTasksOfBackend();
+}
+
 
 // ***** contacts ***** //
 
@@ -147,7 +238,7 @@ async function createNewTask(taskData) {
  * 
  * @returns {JSON} - contacts
  */
-async function getContactsOfServer() {
+async function getContactsFromServer() {
   const url = `http://127.0.0.1:8000/api/contacts/`;
   const res = await fetch(url);
   const data = await res.json();
@@ -179,109 +270,6 @@ async function saveContactOnServer(contactId, contactData) {
   });
 }
 
-
-// ***** current_user ***** //
-
-/**
- * Loads the currentUser from Server and save this in curentUser @storage.js.
- * 
- * @returns {JSON} - currentUser
- */
-async function getCurrentUserOfServer() {
-  const url = `http://127.0.0.1:8000/api/current_user/`;
-  const res = await fetch(url);
-  const data = await res.json();
-  console.log('Received Current User Id from backend:', data); 
-  currentUser = await getUserById(data[0].currentUserIndex);
-  currentUserId = data[0].currentUserIndex;
-  return currentUser;
-}
-
-/**
- * Saves the currentUser data to server.
- * 
- * @param {Integer} current_userIndex 
- * @returns res.json()
- */
-async function saveCurrentUserIdOnServer() {
-  const url = `http://127.0.0.1:8000/api/current_user/1/`; // feste ID (1)
-
-  if (typeof currentUserId !== "number") {
-    console.error("Invalid currentUserId:", currentUserId);
-    return;
-  }
-
-  return fetch(url, {
-    method: "PATCH", // PATCH ist semantisch besser für Teilupdates
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      currentUserIndex: currentUserId,
-    }),
-  }).then(res => {
-    if (!res.ok) {
-      return res.json().then(err => {
-        console.error("Backend error:", err);
-        throw new Error(`Error while saving the current user: ${res.status}`);
-      });
-    }
-    return res.json();
-  });
-}
-
-
-
-
-
-
-
-/**
- * Sorts the Contacts of the task from a-z.
- */
-function sortTasksContacts() {
-  for (let i = 0; i < tasks.length; i++) {
-    tasks[i].contacts.sort((a, b) => {
-      let firstNameA = a.firstName.toLowerCase();
-      let firstNameB = b.firstName.toLowerCase();
-      
-      if (firstNameA < firstNameB) {
-        return -1;
-      }
-      if (firstNameA > firstNameB) {
-        return 1;
-      }
-      return 0;
-    });
-  }
-}
-
-/**
- * Saves and loads the tasks to and from server.
- */
-async function setAndGetToServer() {
-  await setTasksToServer();
-  await getTasksOfBackend();
-}
-
-
-// ***** contacts ***** //
-
-/**
- * Loads the contacts from Server and save this in contacts_global @storage.js.
- */
-async function getContactsFromServer() {
-  try {
-    let ServerData;
-    ServerData = await getContactsOfServer();
-    contacts_global = ServerData;
-    sortContacts();
-    console.log('contacts: ', contacts_global)
-  } catch (e) {
-    console.warn("Could not load contacts!");
-  }
-}
-
 /**
  * Sorts the Contacts from a-z.
  */
@@ -298,28 +286,6 @@ function sortContacts() {
     }
     return 0;
   });
-}
-
-/**
- * Saves the Contacts data to server.
- */
-async function setContactsToServer(){
-  await setItem('contacts', contacts_global);
-}
-
-
-// ***** User ***** //
-
-async function getUsersFromServer() {
-
-  try {
-    let ServerData;
-    ServerData = await getItem("users");
-    let newData = JSON.parse(ServerData.data.value);
-    users = newData;
-  } catch (e) {
-    console.warn("Could not load users!");
-  }
 }
 
 

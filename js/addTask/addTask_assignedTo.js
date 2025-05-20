@@ -8,7 +8,6 @@ let dropdown_status_assignedTo = false;
  */
 async function renderDropList() {
   await getCurrentUserIdFromServer();
-  await getCurrentUserFromServer();
   let dropdown = document.getElementById("dropdown");
   dropdown.innerHTML = "";
   for (let i = 0; i < contacts_addTask.length; i++) {
