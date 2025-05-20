@@ -154,9 +154,9 @@ async function renderAssigedToDialog(taskId) {
             let contact = task.contacts[i];
             container.innerHTML += AssigedToDialogHTML(contact, taskId, i);
             document.getElementById(`taskdetailscontact${taskId}${i}`).style.backgroundColor = `${contact.color}`;
-            if (currentUser !== '' && currentUserId !== 999) {
-                if (contact.firstName == contacts_global[currentUserId].name.firstName && 
-                    contact.secondName == contacts_global[currentUserId].name.secondName) {
+            if (currentUser !== '' && currentUserId !== 1) {
+                if (contact.first_name == contacts_global[currentUserId].first_name && 
+                    contact.second_name == contacts_global[currentUserId].second_name) {
                     await setYou_board_taskdetails(taskId, i);
                 }
             }
@@ -176,8 +176,8 @@ async function renderAssigedToDialog(taskId) {
 function AssigedToDialogHTML(contact, taskId, contactId) {
     return `
         <tr>
-            <td id="taskdetailscontact${taskId}${contactId}" class="member_cycle pos1">${contact.firstName.charAt(0)}${contact.secondName.charAt(0)}</td>
-            <td class="member_name_assiged_to">${contact.firstName} ${contact.secondName} <span id="you_task_details${taskId}${contactId}" class="you"></span></td>
+            <td id="taskdetailscontact${taskId}${contactId}" class="member_cycle pos1">${contact.first_name.charAt(0)}${contact.second_name.charAt(0)}</td>
+            <td class="member_name_assiged_to">${contact.first_name} ${contact.second_name} <span id="you_task_details${taskId}${contactId}" class="you"></span></td>
         </tr>
     `;
 }
