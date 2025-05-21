@@ -9,7 +9,7 @@ let person = [];
 /**
  * Initializes the contact management system.
  * Fetches contacts from the server, sets user initials, and loads contacts.
- * If the current user is not a default user (ID 999), sets 'You' indicator for the user's contacts.
+ * If the current user is not a default user (ID 1), sets 'You' indicator for the user's contacts.
  * @returns {Promise<void>}
  */
 
@@ -19,7 +19,7 @@ async function init() {
     person = contacts_global;
     loadContacts();
     await getCurrentUserIdFromServer();
-    if (currentUserId !== 999) {
+    if (currentUserId !== 1) {
         await setYou_contacts();
     }
 }
@@ -36,9 +36,9 @@ async function loadContacts() {
 
     for (let i = 0; i < person.length; i++) {
         let currentPerson = person[i];
-        if (currentPerson.name && currentPerson.name.firstName) {
-            let firstLetter = currentPerson.name.firstName.charAt(0).toUpperCase();
-            if (!currentPerson.name.secondName) {
+        if (currentPerson.name && currentPerson.first_name) {
+            let firstLetter = currentPerson.first_name.charAt(0).toUpperCase();
+            if (!currentPerson.second_name) {
                 let secondLetter = '';
                 if (!displayedLetters.includes(firstLetter)) {
                     displayedLetters.push(firstLetter);
@@ -46,7 +46,7 @@ async function loadContacts() {
                 }
                 contactList += contactHTML(i, currentPerson, firstLetter, secondLetter);
             } else {
-                let secondLetter = currentPerson.name.secondName.charAt(0).toUpperCase();
+                let secondLetter = currentPerson.second_name.charAt(0).toUpperCase();
                 if (!displayedLetters.includes(firstLetter)) {
                     displayedLetters.push(firstLetter);
                     contactList += `<div class="first_letter"><h3>${firstLetter}</h3></div>`;
@@ -68,14 +68,14 @@ async function loadContacts() {
  */
 
 function contactHTML(i, currentPerson, firstLetter, secondLetter) {
-    let secondName = currentPerson.name.secondName;
+    let secondName = currentPerson.second_name;
     if (typeof secondName == 'undefined') {
         secondName = ''
     }
     return `
         <div onclick="changeBackground(this);selectPerson(${i}); handleClick(${i})" id="persons_details" class="persons_details">
-            <div class="persons" style="background-color: ${currentPerson.name.color};">${firstLetter}${secondLetter}</div>
-            <div class="person_details">${currentPerson.name.firstName} ${secondName} <span class="you" id="youContactList${i}"></span><br><div class="email">${currentPerson.mail}</div></div>
+            <div class="persons" style="background-color: ${currentPerson.color};">${firstLetter}${secondLetter}</div>
+            <div class="person_details">${currentPerson.first_name} ${secondName} <span class="you" id="youContactList${i}"></span><br><div class="email">${currentPerson.mail}</div></div>
         </div>
     `;
 }
@@ -87,7 +87,7 @@ function contactHTML(i, currentPerson, firstLetter, secondLetter) {
 
 async function setYou_contacts() {
     await getCurrentUserIdFromServer();
-    if (person[currentUserId].name.firstName == currentUser.name.firstName && person[currentUserId].name.secondName == currentUser.name.secondName) {
+    if (person[currentUserId].first_name == currentUser.first_name && person[currentUserId].second_name == currentUser.second_name) {
         let you = document.getElementById(`youContactList${currentUserId}`);
         you.innerHTML = "(You)";
     };
@@ -104,7 +104,7 @@ function selectPerson(index) {
     let selectedPersonElement = document.getElementById('selectedPerson');
     selectedPersonElement.innerHTML = selectPersonHTML(selectedPerson, index);
     document.getElementById('selectedPersonIndex').value = index;
-    document.getElementById('selectedPersonInitials').innerHTML = `<div class="persons" style="background-color: ${selectedPerson.name.color};">${selectedPerson.name.firstName.charAt(0).toUpperCase()}${selectedPerson.name.secondName.charAt(0).toUpperCase()}</div>`;
+    document.getElementById('selectedPersonInitials').innerHTML = `<div class="persons" style="background-color: ${selectedPerson.color};">${selectedPerson.first_name.charAt(0).toUpperCase()}${selectedPerson.second_name.charAt(0).toUpperCase()}</div>`;
     selectedPersonElement.classList.remove('active');
     setTimeout(function () {
         selectedPersonElement.classList.add('active');
@@ -121,8 +121,8 @@ function selectPerson(index) {
 function selectPersonHTML(selectedPerson, index) {
     return `
     <div class="persons_details">
-    <div class="persons" style="background-color: ${selectedPerson.name.color};">${selectedPerson.name.firstName.charAt(0).toUpperCase()}${selectedPerson.name.secondName.charAt(0).toUpperCase()}</div>
-    <div class="person_details">${selectedPerson.name.firstName} ${selectedPerson.name.secondName}
+    <div class="persons" style="background-color: ${selectedPerson.color};">${selectedPerson.first_name.charAt(0).toUpperCase()}${selectedPerson.second_name.charAt(0).toUpperCase()}</div>
+    <div class="person_details">${selectedPerson.first_name} ${selectedPerson.second_name}
     <div onclick="openWindow()" class="button_contacts">
     <div id="editDeleteWindow" class="edit_delete_window">
     <a onclick="editPerson(${index})">
@@ -304,7 +304,7 @@ function editPerson(index) {
     let emailInput = document.getElementById('email');
     let phoneInput = document.getElementById('phone');
 
-    nameInput.value = `${selectedPerson.name.firstName} ${selectedPerson.name.secondName}`;
+    nameInput.value = `${selectedPerson.first_name} ${selectedPerson.second_name}`;
     emailInput.value = selectedPerson.mail;
     phoneInput.value = selectedPerson.phone;
 
@@ -330,15 +330,15 @@ async function createContact(event) {
     let phoneInput = document.getElementById('input_phone').value;
 
     if (nameInput && emailInput && phoneInput) {
-        let [firstName, secondName] = nameInput.split(' ');
+        let [first_name, secondName] = nameInput.split(' ');
         if (typeof secondName == 'undefined') {
             secondName = '';
         }
         let fixedColor = "rgba(255, 199, 0, 1)";
         let newContact = {
             "name": {
-                "firstName": firstName,
-                "secondName": secondName,
+                "first_name": first_name,
+                "second_name": secondName,
                 "color": fixedColor
             },
             "mail": emailInput,
@@ -350,7 +350,7 @@ async function createContact(event) {
         await getContactsFromServer();
         loadContacts();
         closeDialog();
-        let newIndex = person.findIndex(p => p.name.firstName === firstName && p.name.secondName === secondName);
+        let newIndex = person.findIndex(p => p.first_name === first_name && p.second_name === secondName);
         if (newIndex !== -1) {
             selectPerson(newIndex);
             setTimeout(function () {
@@ -371,8 +371,8 @@ async function createContact(event) {
 
 function sortPerson() {
     person.sort(function (a, b) {
-        let nameA = (a.name.firstName + ' ' + a.name.secondName).toUpperCase();
-        let nameB = (b.name.firstName + ' ' + b.name.secondName).toUpperCase();
+        let nameA = (a.first_name + ' ' + a.second_name).toUpperCase();
+        let nameB = (b.first_name + ' ' + b.second_name).toUpperCase();
         if (nameA < nameB) {
             return -1;
         }
@@ -396,16 +396,16 @@ async function saveChanges() {
     let phoneInput = document.getElementById('phone').value;
 
     if (nameInput && emailInput) {
-        let [firstName, secondName] = nameInput.split(' ');
+        let [first_name, secondName] = nameInput.split(' ');
 
-        selectedPerson.name.firstName = firstName;
-        selectedPerson.name.secondName = secondName;
+        selectedPerson.first_name = first_name;
+        selectedPerson.second_name = secondName;
         selectedPerson.mail = emailInput;
         selectedPerson.phone = phoneInput;
 
         sortPerson();
 
-        let updatedIndex = person.findIndex(p => p.name.firstName === firstName && p.name.secondName === secondName);
+        let updatedIndex = person.findIndex(p => p.first_name === first_name && p.second_name === secondName);
 
         await setContactsToServer();
         await getContactsFromServer();

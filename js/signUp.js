@@ -13,19 +13,9 @@ let registerSuccessfull = document.getElementById("register_successfull");
 let nameValidation = false;
 
 async function init() {
-  loadUsers();
+  getUsersOfServer()
 }
 
-async function loadUsers() {
-  try {
-    let ServerData;
-    ServerData = await getItem("users");
-    let newData = JSON.parse(ServerData.data.value);
-    users = newData;
-  } catch (e) {
-    console.warn("Could not load users!");
-  }
-}
 
 async function register() {
   checkName();
@@ -70,28 +60,25 @@ function checkName() {
 
 async function saveNewUser() {
   users.push({
-   name: {
-     firstName: firstName,
-     secondName: secondName,
-     color: "#ff4646",
-   },
-   mail: mail.value,
-   password: password.value,
-   lockedIn: false,
+    first_name: firstName,
+    second_name: secondName,
+    color: "#ff4646",
+    mail: mail.value,
+    password: password.value,
+    lockedIn: false,
  });
- await setItem("users", users);
+ await createNewUser(users);
 }
 
 async function createContact() {
   await getContactsFromServer();
   let newContact = {
-    "name": {
-        "firstName": firstName,
-        "secondName": secondName,
-        "color": "#ff4646",
-    },
+    "first_name": firstName,
+    "second_name": secondName,
+    "color": "#ff4646",
     "mail": mail.value,
     "phone": '',
+    "locked_in": false
 };
   contacts_global.push(newContact);
   sortPerson();
@@ -101,8 +88,8 @@ async function createContact() {
 
 function sortPerson() {
   contacts_global.sort(function (a, b) {
-      let nameA = (a.name.firstName + ' ' + a.name.secondName).toUpperCase();
-      let nameB = (b.name.firstName + ' ' + b.name.secondName).toUpperCase();
+      let nameA = (a.first_name + ' ' + a.second_name).toUpperCase();
+      let nameB = (b.first_name + ' ' + b.second_name).toUpperCase();
       if (nameA < nameB) {
           return -1;
       }

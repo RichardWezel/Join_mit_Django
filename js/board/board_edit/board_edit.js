@@ -37,7 +37,7 @@ function renderEditDialog(taskId) {
     container.innerHTML = editDialogHTML(taskId);
     renderTitleEditDialog(taskId);
     renderDescriptionEditDialog();
-    renderDueDateEditDialog(taskId);
+    renderdue_dateEditDialog(taskId);
     renderPrioEditDialog();
     renderAssigedToEditDialog(taskId);
     renderSubtasksEditDialog(taskId);
@@ -60,7 +60,7 @@ function editDialogHTML(taskId) {
         </div>
         <div id="title_section_edit" class="distance"></div> 
         <div id="description_section_edit" class="distance"></div>
-        <div id="dueDate_section_edit" class="distance"></div>
+        <div id="due_date_section_edit" class="distance"></div>
         <div id="prio_section_edit" class="distance"></div>
         <div id="assignedTo_section_edit" class="distance flexDirection" onclick="doNotClose(event)"></div>
         <div id="subtask_section_edit" class="distance flexDirection"></div>    
@@ -111,11 +111,11 @@ function DescriptionEditDialogHTML() {
  * 
  * @param {Number} taskId - Index of task in tasks array
  */
-function renderDueDateEditDialog() {
-    let container = document.getElementById('dueDate_section_edit');
-    let newDate = currentTaskContent.dueDate;
-    container.innerHTML = DueDateEditDialogHTML();
-    setDueDateValue();
+function renderdue_dateEditDialog() {
+    let container = document.getElementById('due_date_section_edit');
+    let newDate = currentTaskContent.due_date;
+    container.innerHTML = due_dateEditDialogHTML();
+    setdue_dateValue();
     renderminDateEdit();
 }
 
@@ -125,11 +125,11 @@ function renderDueDateEditDialog() {
  * @param {String} newDate - represents the  Due Date format dd/mm/yyyy of current task
  * @returns {HTMLElements} - HTML input with due date
  */
-function DueDateEditDialogHTML() {
+function due_dateEditDialogHTML() {
     return /*html*/`
         <div class="header_text_edit_section">Due Date</div>
         <form>
-            <input class="" onkeyup="checkFormValidation_DueDate()" onfocusout="checkFormValidation_DueDate()"pattern="\d{2}/\d{2}/\d{4}" placeholder="dd/mm/yyyy" id="edit_input_dueDate" type="date" required>
+            <input class="" onkeyup="checkFormValidation_due_date()" onfocusout="checkFormValidation_due_date()"pattern="\d{2}/\d{2}/\d{4}" placeholder="dd/mm/yyyy" id="edit_input_due_date" type="date" required>
         </form>
         <div class="" id="errormessage_due_date">This field is required</div>
     `;
@@ -138,16 +138,16 @@ function DueDateEditDialogHTML() {
 /**
  * Gets the due date in format dd/mm/yy and transform this in yyyy-mm-dd to show the date in input type date.
  */
-function setDueDateValue() {
-    let dateInput = document.getElementById('edit_input_dueDate');
-    date = currentTaskContent.dueDate.split('/');
+function setdue_dateValue() {
+    let dateInput = document.getElementById('edit_input_due_date');
+    date = currentTaskContent.due_date.split('/');
     date[2] = parseInt(date[2].trim()) +2000;
     let new_date_format = date[2] + '-' + date[1] + '-' + date[0];
     dateInput.value = new_date_format;
 }
 
 function renderminDateEdit() {
-  let dateInput = document.getElementById('edit_input_dueDate');
+  let dateInput = document.getElementById('edit_input_due_date');
   let today = new Date;
   let day = today.getDate();
   if (day < 10) {

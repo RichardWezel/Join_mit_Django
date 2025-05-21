@@ -29,7 +29,7 @@ function renderAddTaskDialog() {
     renderTitleAddTaskDialog();
     renderDescriptionAddTaskDialog();
     renderAssigedToEditDialog_addTask();
-    renderDueDateEditDialog_addTask();
+    renderdue_dateEditDialog_addTask();
     renderPrioEditDialog_addTask();
     renderCategoryAddTaskDialog();
     renderSubtasksEditDialog_addTask();
@@ -67,7 +67,7 @@ function addTaskDialogHTML() {
             <hr id="line_addTask_dialog">
             <!-- right -->
             <div class="addTask_dialog_box_content_right">
-                <div id="addTask_dialog_duedate" class="distance"></div>
+                <div id="addTask_dialog_due_date" class="distance"></div>
                 <div id="addTask_dialog_priority" class="distance flexDirection"></div>
                 <div id="addTask_dialog_category" class="distance flexDirection"></div>
                 <div id="addTask_dialog_subtasks" class="distance flexDirection"></div>
@@ -134,9 +134,9 @@ function DescriptionEditDialogHTML_addTask() {
 /**
  * show Due Date input to change content of Due Date via inputfield
  */
-function renderDueDateEditDialog_addTask() {
-    let container = document.getElementById('addTask_dialog_duedate');
-    container.innerHTML = DueDateEditDialogHTML_addTask();
+function renderdue_dateEditDialog_addTask() {
+    let container = document.getElementById('addTask_dialog_due_date');
+    container.innerHTML = due_dateEditDialogHTML_addTask();
 }
 
 /**
@@ -144,11 +144,11 @@ function renderDueDateEditDialog_addTask() {
  * 
  * @returns {HTMLDivElement}
  */
-function DueDateEditDialogHTML_addTask() {
+function due_dateEditDialogHTML_addTask() {
     return /*html*/`
         <div class="header_text_edit_section">Due Date<span class="red_star">*</span></div>
         <form>
-            <input class="" onfocusout="DueDatevalidation_addTask()" placeholder="dd/mm/yyyy" id="edit_input_dueDate_addTask" type="date"  required>
+            <input class="" onfocusout="due_datevalidation_addTask()" placeholder="dd/mm/yyyy" id="edit_input_due_date_addTask" type="date"  required>
         </form>
         <div class="" id="errormessage_due_date_addTask">This field is required</div>
     `;
@@ -157,7 +157,7 @@ function DueDateEditDialogHTML_addTask() {
 /**
  * Starts the validation functions für day, month and year of the due date input.
  */
-function DueDatevalidation_addTask() {
+function due_datevalidation_addTask() {
     validationOfDay_addTask();
     validationOfMonth_addTask();
     validationOfYear_addTask();
@@ -168,7 +168,7 @@ function DueDatevalidation_addTask() {
  * In case of not valide the border turns red and a text message is showen.
  */
 function validationOfDay_addTask() {
-    let inputDate = document.getElementById("edit_input_dueDate_addTask");
+    let inputDate = document.getElementById("edit_input_due_date_addTask");
     let errormessage_due_date = document.getElementById("errormessage_due_date_addTask");
     let parts = inputDate.value.split('-');
     let day = parts[2];
@@ -187,7 +187,7 @@ function validationOfDay_addTask() {
  * In case of not valide the border turns red and a text message is showen.
  */
 function validationOfMonth_addTask() {
-    let inputDate = document.getElementById("edit_input_dueDate_addTask");
+    let inputDate = document.getElementById("edit_input_due_date_addTask");
     let errormessage_due_date = document.getElementById("errormessage_due_date_addTask");
     let parts = inputDate.value.split('-');
     let month = parts[1];
@@ -208,7 +208,7 @@ function validationOfMonth_addTask() {
  * In case of not valide the border turns red and a text message is showen.
  */
 function validationOfYear_addTask() {
-    let inputDate = document.getElementById("edit_input_dueDate_addTask");
+    let inputDate = document.getElementById("edit_input_due_date_addTask");
     let errormessage_due_date = document.getElementById("errormessage_due_date_addTask");
     let parts = inputDate.value.split('-');
     let year = parseInt(parts[0], 10);

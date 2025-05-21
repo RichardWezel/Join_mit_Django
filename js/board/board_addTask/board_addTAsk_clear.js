@@ -10,8 +10,8 @@ function clearInputsAddTaskDialog() {
     let descriptionInput = document.getElementById('input_description_addTask_dialog');
     descriptionInput.value = '';
     contacts_addTask = [];
-    let duedateInput = document.getElementById('edit_input_dueDate_addTask');
-    duedateInput.value = '';
+    let due_dateInput = document.getElementById('edit_input_due_date_addTask');
+    due_dateInput.value = '';
     prio_addTask = 'Medium';
     selectedCategory = '';
     new_subtask_addTask_dialog = [];

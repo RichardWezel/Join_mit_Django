@@ -19,7 +19,7 @@ async function confirmInputsOfEditDialog(taskId) {
  * @returns {Boolean} false by empty input field / true by content
  */
 function input_value_validation(){
-    let input_value_due_date = document.getElementById('edit_input_dueDate').value;
+    let input_value_due_date = document.getElementById('edit_input_due_date').value;
     let input_value_title = document.getElementById('title_edit').value;
     if (input_value_due_date == '' || input_value_title == '') {
         return false;
@@ -35,7 +35,7 @@ function input_value_validation(){
 function getInputValuesOfEditDialog() {
     currentTaskContent.title = document.getElementById('title_edit').value;
     currentTaskContent.description = document.getElementById('edit_input_description').value;
-    currentTaskContent.dueDate = changeDueDateFormatInShortYear();
+    currentTaskContent.due_date = changedue_dateFormatInShortYear();
     currentTaskContent.priority = prioStatusEdit;
 }
 
@@ -44,8 +44,8 @@ function getInputValuesOfEditDialog() {
  * 
  * @returns {String} "dd/mm/yy"
  */
-function changeDueDateFormatInShortYear() {
-    let date = document.getElementById('edit_input_dueDate').value;
+function changedue_dateFormatInShortYear() {
+    let date = document.getElementById('edit_input_due_date').value;
     date = date.split('-');
     let year = parseInt(date[0]); 
     year = year - 2000;
@@ -90,17 +90,17 @@ function checkFormValidation_title() {
 /**
  * Validates the due date input. Corlor the border and show a error message in case of there is no contaent at input.
  */
-function checkFormValidation_DueDate() {
-    let dueDateInput = document.getElementById('edit_input_dueDate');
-    let errormessage_dueDate = document.getElementById('errormessage_due_date');
-    if (dueDateInput.value == '') {
-        dueDateInput.classList.add('non_valide'); // red border
-        errormessage_dueDate.innerHTML = 'This field is required'; // div is under the Input
+function checkFormValidation_due_date() {
+    let due_dateInput = document.getElementById('edit_input_due_date');
+    let errormessage_due_date = document.getElementById('errormessage_due_date');
+    if (due_dateInput.value == '') {
+        due_dateInput.classList.add('non_valide'); // red border
+        errormessage_due_date.innerHTML = 'This field is required'; // div is under the Input
         document.getElementById('errormessage_due_date').style.display = 'block'; // let div with text appear
         document.getElementById('close_section_edit').scrollIntoView({ behavior: 'smooth', block: 'start' }); // scroll to input
-        document.getElementById('edit_input_dueDate').focus();
+        document.getElementById('edit_input_due_date').focus();
   } else {
-    dueDateInput.classList.remove('non_valide');
-    errormessage_dueDate.style.display = 'none';
+    due_dateInput.classList.remove('non_valide');
+    errormessage_due_date.style.display = 'none';
   }
 }

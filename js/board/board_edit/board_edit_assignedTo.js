@@ -74,8 +74,8 @@ function renderCiclesOfTaskContacts(taskId) {
         container.innerHTML = '';
         for (let i = 0; i < currentTaskContent.contacts.length; i++) {
             let contact = currentTaskContent.contacts[i];
-            let firstCharacter = contact.firstName.charAt(0);
-            let secondCharacter = contact.secondName.charAt(0);
+            let firstCharacter = contact.first_name.charAt(0);
+            let secondCharacter = contact.second_name.charAt(0);
             let color = contact.color;
             container.innerHTML += selectedTaskMemberHTML(firstCharacter, secondCharacter, taskId, i); 
             document.getElementById(`selected_task_member${taskId}${i}`).style.backgroundColor = `${color}`;} 
@@ -190,17 +190,17 @@ function showContactList(taskId, searchValue) {
     container.innerHTML = '';
     for (let i = 0; i < loaded_contacts.length; i++) {
         if (!searchValue || 
-            loaded_contacts[i].name.firstName.toLowerCase().includes(searchValue) || 
-            loaded_contacts[i].name.secondName.toLowerCase().includes(searchValue)) {
+            loaded_contacts[i].first_name.toLowerCase().includes(searchValue) || 
+            loaded_contacts[i].second_name.toLowerCase().includes(searchValue)) {
                 container.innerHTML += editContactListHTML(taskId, i);
                 // circle & checkbox are separate rendered
                 renderMemberImageDropdown(taskId, i);
                 renderSelectionStatusLayout(taskId, i);
-                if (currentUser !== '' && currentUserId !== 999) {
-                    if (loaded_contacts[i].name.firstName == contacts_global[currentUserId].name.firstName && 
-                        loaded_contacts[i].name.secondName == contacts_global[currentUserId].name.secondName || 
-                        loaded_contacts[i].name.firstName == contacts_global[currentUserId].name.firstName && 
-                        typeof loaded_contacts[i].name.secondName == 'undefined') {
+                if (currentUser !== '' && currentUserId !== 1) {
+                    if (loaded_contacts[i].first_name == contacts_global[currentUserId].first_name && 
+                        loaded_contacts[i].second_name == contacts_global[currentUserId].second_name || 
+                        loaded_contacts[i].first_name == contacts_global[currentUserId].first_name && 
+                        typeof loaded_contacts[i].second_name == 'undefined') {
                             setYou_board_edit(taskId, i);
                     }
                 }
@@ -344,13 +344,13 @@ function checkContactIndex(firstName, secondName) {
  */
 function renderMemberImageDropdown(taskId, contactId) {
     let container = document.getElementById(`character_image${taskId}${contactId}`);
-    let firstCharacter = loaded_contacts[contactId].name.firstName.charAt(0);
-    if (typeof loaded_contacts[contactId].name.secondName == 'undefined') {
+    let firstCharacter = loaded_contacts[contactId].first_name.charAt(0);
+    if (typeof loaded_contacts[contactId].second_name == 'undefined') {
         let secondCharacter = '';
         container.innerHTML = dropdownContactHTML(firstCharacter, secondCharacter, taskId, contactId);   
         setcicleColor(taskId, contactId);
     } else {
-    let secondCharacter = loaded_contacts[contactId].name.secondName.charAt(0);
+    let secondCharacter = loaded_contacts[contactId].second_name.charAt(0);
     container.innerHTML = dropdownContactHTML(firstCharacter, secondCharacter, taskId, contactId);   
     setcicleColor(taskId, contactId);
     }
@@ -379,7 +379,7 @@ function dropdownContactHTML(firstCharacter, secondCharacter, taskId, contactId)
  */
 function setcicleColor(taskId, contactId) {
     let cicle = document.getElementById(`selected_task_member${taskId}${contactId}`);
-    let color = loaded_contacts[contactId].name.color;
+    let color = loaded_contacts[contactId].color;
     cicle.style.backgroundColor = `${color}`;
 }
 
@@ -392,9 +392,9 @@ function setcicleColor(taskId, contactId) {
  * @param {Number} contactId - Index of Contact in loaded_contacts array
  */
 function changeSelectionStatus(taskId, contactId) {
-    let contact = loaded_contacts[contactId].name;
-    let firstName = contact.firstName;
-    let secondName = contact.secondName;
+    let contact = loaded_contacts[contactId];
+    let firstName = contact.first_name;
+    let secondName = contact.second_name;
     let color = contact.color;
     let selectedContactStatus = checkContactSelected(`${firstName}`, `${secondName}`)
     if (selectedContactStatus == true) {

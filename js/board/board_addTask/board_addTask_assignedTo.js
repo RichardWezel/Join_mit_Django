@@ -209,8 +209,8 @@ async function showContactList_addTask(searchValue) {
             // circle & checkbox are separate rendered
             renderCiclesOfContactsDropdown_addTask(i);
             renderSelectionStatusLayout_addTask(i);
-            if (!currentUserId == 999){
-                if (contacts_addTask[i].firstName == contacts_global[currentUserId].name.firstName && contacts_addTask[i].secondName == contacts_global[currentUserId].name.secondName) {
+            if (!currentUserId == 1){
+                if (contacts_addTask[i].first_name == contacts_global[currentUserId].first_name && contacts_addTask[i].secondName == contacts_global[currentUserId].second_name) {
                     setYou_boardAddTask(i);
                 }
             }

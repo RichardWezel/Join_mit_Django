@@ -24,7 +24,7 @@ async function renderDialogTask(taskId){
     let container = document.getElementById('task_dialog_container');
     let task = tasks[taskId];
     container.innerHTML = taskDialogHTML(task, taskId);
-    changeDueDateFormat(taskId);
+    changedue_dateFormat(taskId);
     setColorOfCategoryInDialog(taskId);
     renderPriorityDialog(taskId);
     await renderAssigedToDialog(taskId);
@@ -56,7 +56,7 @@ function taskDialogHTML(task, taskId) {
             <div onclick="doNotClose(event)" class="task_description_dialog">${task.description}</div>
             <!-- Due date -->
             <div onclick="doNotClose(event)" class="due_Date_dialog">
-                Due date: <span id="dueDateTaskDetails" class="duedate">${task.dueDate}</span>
+                Due date: <span id="due_dateTaskDetails" class="due_date">${task.due_date}</span>
             </div>
             <!-- priority -->
             <div onclick="doNotClose(event)" class="priority_dialog">
@@ -105,13 +105,13 @@ function taskDialogHTML(task, taskId) {
 }
 
 /**
- * Saves the new format of DueDate.
+ * Saves the new format of due_date.
  * 
  * @param {Number} taskId - Index of current called task in tasks[] global array.
  */
-function changeDueDateFormat(taskId) {
-    let container = document.getElementById('dueDateTaskDetails');
-    let date = changeDueDateFormatInLongYear(taskId);
+function changedue_dateFormat(taskId) {
+    let container = document.getElementById('due_dateTaskDetails');
+    let date = changedue_dateFormatInLongYear(taskId);
     container.innerHTML = `${date}`;
 }
 

@@ -5,7 +5,7 @@ let awaitingFeedbackAmount = 0;
 let doneAmount = 0;
 let allAmounts = 0;
 let urgentAmount = 0;
-let nextDueDate;
+let nextdue_date;
 let tasks_summery = '';
 
 function isMaxWidth1000() {
@@ -23,7 +23,7 @@ async function init() {
     copyTasksArray();
     copyContactsArray();
     calcValuesOfSummery();
-    getNextDueDate();
+    getNextdue_date();
     render();
   } else {
     let summary_container = document.getElementById('summary_main_container');
@@ -36,7 +36,7 @@ async function init() {
     copyTasksArray();
     copyContactsArray();
     calcValuesOfSummery();
-    getNextDueDate();
+    getNextdue_date();
     render();
   }
 }
@@ -53,7 +53,7 @@ async function greeting() {
       text.innerHTML = 'Good morning!';
     } else {
       text.innerHTML = 'Good morning,';
-      user.innerHTML = `${currentUser.name.firstName} ${currentUser.name.secondName}`;
+      user.innerHTML = `${currentUser.first_name} ${currentUser.second_name}`;
     }
     await timeout(2000);
     container.style.display = 'none';
@@ -93,7 +93,7 @@ async function copyTasksArray() {
 async function changeDateFormatOfTasks() {
   tasks_summery = tasks.map((task) => {
     let [DD, MM, YY] = task.due_date.split("/");
-    return { ...task, dueDate: new Date(`20${YY}-${MM}-${DD}`) };
+    return { ...task, due_date: new Date(`20${YY}-${MM}-${DD}`) };
   });
 }
 
@@ -104,7 +104,7 @@ function copyContactsArray() {
 function render() {
   renderToDoAmount();
   renderDoneAmount();
-  renderNextDueDate();
+  renderNextdue_date();
   renderUrgentAmount();
   renderAllAmount();
   renderInProgressAmount();
@@ -164,7 +164,7 @@ function renderAwaitingFeedbackAmount() {
   awaitingFeedbackAmountElement.innerHTML = awaitingFeedbackAmount;
 }
 
-function getNextDueDate() {
+function getNextdue_date() {
   let tasksNotDone = tasks
     .filter(task => task.status !== "done")
     .map(task => {
@@ -177,22 +177,22 @@ function getNextDueDate() {
     .sort((a, b) => a.parsedDate - b.parsedDate);
 
   if (tasksNotDone.length > 0) {
-    nextDueDate = new Intl.DateTimeFormat("en-US", {
+    nextdue_date = new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
     }).format(tasksNotDone[0].parsedDate);
 
-    return nextDueDate;
+    return nextdue_date;
   } else {
     return "Keine ausstehenden Aufgaben gefunden.";
   }
 }
 
 
-function renderNextDueDate() {
-  let nextDueDateElement = document.getElementById("next_due_date");
-  nextDueDateElement.innerHTML = nextDueDate;
+function renderNextdue_date() {
+  let nextdue_dateElement = document.getElementById("next_due_date");
+  nextdue_dateElement.innerHTML = nextdue_date;
 }
 
 function calcUrgentAmount() {
@@ -213,11 +213,11 @@ function renderUserName() {
   let userNameElement = document.getElementById("user_name");
   if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser[0] == '' || currentUserId == 1) {
     userNameElement.innerHTML = `Guest`;
-  } else if (typeof currentUser.secondName == "undefined") {
-    let firstName = currentUser.firstName;
+  } else if (typeof currentUser.second_name == "undefined") {
+    let firstName = currentUser.first_name;
     userNameElement.innerHTML = `${firstName}`; 
   } else {
-    userNameElement.innerHTML = `${currentUser.name.firstName} ${currentUser.name.secondName}`;
+    userNameElement.innerHTML = `${currentUser.first_name} ${currentUser.second_name}`;
   }
 }
 

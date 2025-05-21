@@ -8,7 +8,7 @@ let newTask_board = {
     "description": "",
     "category": "",
     "contacts": [],
-    "dueDate": "",
+    "due_date": "",
     "priority": "",
     "subtasks": [],
     "status": "toDo"
@@ -30,16 +30,16 @@ function addStatus(status) {
  */
 async function validationOfAllInputs() {
     let titleInput = document.getElementById('input_title_addTask_dialog');
-    let duedateInput = document.getElementById('edit_input_dueDate_addTask');
+    let due_dateInput = document.getElementById('edit_input_due_date_addTask');
     if (titleInput.value == '') {
         window.location.hash='input_title_addTask_dialog';
         checkFormValidation_title_addTask();
     } else 
     
-    if (duedateInput.value == '') {
-        window.location.hash='edit_input_dueDate_addTask';
-        DueDatevalidation_addTask();
-        document.getElementById('edit_input_dueDate_addTask').classList.add('non_valide');
+    if (due_dateInput.value == '') {
+        window.location.hash='edit_input_due_date_addTask';
+        due_datevalidation_addTask();
+        document.getElementById('edit_input_due_date_addTask').classList.add('non_valide');
     } else 
 
     if (selectedCategory == '') {
@@ -85,7 +85,7 @@ function saveNewTask() {
     description_newTask();
     category_newTask();
     contacts_newTask();
-    dueDate_newTask();
+    due_date_newTask();
     priority_newTask();
     subtasks_newTask();
     status_newTask();
@@ -119,7 +119,7 @@ function resetNewTask() {
         "description": "",
         "category": "",
         "contacts": [],
-        "dueDate": "",
+        "due_date": "",
         "priority": "",
         "subtasks": [],
         "status": "toDo"
@@ -169,15 +169,15 @@ function contacts_newTask() {
 }
 
 /**
- * Adds the due date from Input to newTask.dueDate with the right format dd/mm/yy.
+ * Adds the due date from Input to newTask.due_date with the right format dd/mm/yy.
  */
-function  dueDate_newTask() {
-    let duedateInput = document.getElementById('edit_input_dueDate_addTask').value;
-    duedateInput = duedateInput.split('-');
-    let year = parseInt(duedateInput[0]); 
+function  due_date_newTask() {
+    let due_dateInput = document.getElementById('edit_input_due_date_addTask').value;
+    due_dateInput = due_dateInput.split('-');
+    let year = parseInt(due_dateInput[0]); 
     year = year - 2000;
-    let newDate = duedateInput[2] + '/' + duedateInput[1] + '/' + year;
-    newTask_board.dueDate = newDate;
+    let newDate = due_dateInput[2] + '/' + due_dateInput[1] + '/' + year;
+    newTask_board.due_date = newDate;
 }
 
 /**

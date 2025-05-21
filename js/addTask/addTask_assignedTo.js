@@ -13,11 +13,11 @@ async function renderDropList() {
   for (let i = 0; i < contacts_addTask.length; i++) {
     let contact = contacts_addTask[i];
     dropdown.innerHTML += dropdownHtml(contact, i);
-    if (currentUser !== '' && currentUserId !== 999 || currentUser !== 999 && currentUserId !== 999) {
-      if (contact.name.firstName == contacts_global[currentUserId].name.firstName && 
-          contact.name.secondName == contacts_global[currentUserId].name.secondName || 
-          contact.name.firstName == contacts_global[currentUserId].name.firstName && 
-          typeof contact.name.secondName == 'undefined') {
+    if (currentUser !== '' && currentUserId !== 1 || currentUser !== 1 && currentUserId !== 1) {
+      if (contact.first_name == contacts_global[currentUserId].first_name && 
+          contact.second_name == contacts_global[currentUserId].second_name || 
+          contact.first_name == contacts_global[currentUserId].first_name && 
+          typeof contact.second_name == 'undefined') {
             setYou_addTask(i); 
           }
     }
@@ -168,9 +168,9 @@ function dropdownHtmlAdditionalMemberCircle(amount) {
  * @returns {HTMLDivElement}
  */
 function dropdownHtmlMemberCircle(i) {
-  let firstName = contacts_addTask[i].name.firstName;
-  let secondName = contacts_addTask[i].name.secondName;
-  let color = contacts_addTask[i].name.color;
+  let firstName = contacts_addTask[i].first_name;
+  let secondName = contacts_addTask[i].second_name;
+  let color = contacts_addTask[i].color;
   return `
     <div class="member_cicle_main">
       <div class="member_cicle" style="background-color:${color};">

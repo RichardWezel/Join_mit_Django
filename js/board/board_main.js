@@ -67,7 +67,7 @@ function searchTask() {
  * @param {Number} taskId - Index of task in tasks array 
  * @returns {String} - String with the format dd/mm/yyyy
  */
-function changeDueDateFormatInLongYear(taskId) {
+function changedue_dateFormatInLongYear(taskId) {
     let date = tasks[taskId].due_date;
     date = date.split('/');
     let year = parseInt(date[2]); 

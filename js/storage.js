@@ -352,36 +352,15 @@ async function saveNewTask_statusOnServer() {
 let accounts = [];
 
 /**
- * Push new Content to Server
- */
-async function setUserToServer() {
-  await setItem('users', accounts);   
-}
-
-/**
  * Load the tasks JSON Array from Server in tasks[]
  */
 async function getAccountsFromServer() {
   try {
-    let ServerData;
-    ServerData = await getItem("users");
-    let newData = JSON.parse(ServerData.data.value);
+    let newData = getUsersOfServer()
     accounts = newData;
   } catch (e) {
     console.warn("Could not load accounts!");
   }
-}
-
-/**
- * Deletes acoount bei set the Index of account from users
- * 
- * @param {Number} account_index - Index of account to delete from Server
- */
-async function deleteAccount(account_index) {
-  await getAccountsFromServer();
-  accounts.splice(account_index,1);
-  await setItem('users', accounts);
-  await getAccountsFromServer();
 }
 
 /**
@@ -425,9 +404,11 @@ async function setStatusToServer() {
  */
 async function getStatusFromServer() {
   try {
-    let ServerData;
-    ServerData = await getItem('status');
-    let newData = ServerData.data.value;
+    let newData = getStatusFromServer();
+    if (newData.length === 0) {
+      console.warn('No status object found!');
+      return;
+    }
     statusBymobile_addTask_board = newData;
   } catch (e) {
     console.warn("Could not load status for new task!");

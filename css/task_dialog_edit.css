@@ -81,14 +81,14 @@
 
 /***** Due Date Section *****/
 
-#dueDate_section_edit input {
+#due_date_section_edit input {
     border-radius: 10px;
     padding-left: 21px;
     cursor: pointer;
     border: 1px solid #ccc;
 }
 
-#edit_input_dueDate::placeholder {
+#edit_input_due_date::placeholder {
     color: #D1D1D1;
 }
 
