@@ -8,6 +8,7 @@ let currentUser = [];
 let currentUserId = '';
 let users = [];
 let newTask_status = false;
+let newUser;
 
 // ***** user ***** //
 
@@ -54,6 +55,29 @@ async function getUserById(userId) {
   const data = await res.json();
   console.log('Received User by ID from backend:', data); 
   return data;
+}
+
+/**
+ * Add the new user to contact list of contacts.html.
+ * 
+ * @param {String} firstName 
+ * @param {String} secondName 
+ * @param {String} mail 
+ * @param {String} password 
+ */
+function creatNewUser(firstName, secondName, mail, password) {
+  if (typeof firstName !== "string" || typeof secondName !== "string" || typeof mail !== "string" || typeof password !== "string") {
+    console.error("Invalid input data:", { firstName, secondName, mail, password });
+    return;
+  }
+  newUser = {
+    first_name: firstName,
+    second_name: secondName,
+    color: "#ff4646",
+    mail: mail,
+    password: password,
+    lockedIn: false,
+  };
 }
 
 async function createNewUser(userData) {
@@ -363,29 +387,6 @@ async function getAccountsFromServer() {
   }
 }
 
-/**
- * Add the new user to contact list of contacts.html.
- * 
- * @param {String} firstName 
- * @param {String} secondName 
- * @param {String} mail 
- * @param {String} password 
- */
-async function creatNewUserIntern(firstName, secondName, mail, password) {
-  await getAccountsFromServer();
-  accounts.push({
-    name: {
-      firstName: firstName,
-      secondName: secondName,
-      color: "#ff4646",
-    },
-    mail: mail,
-    password: password,
-    lockedIn: false,
-  });
-  await setItem('users', accounts);
-  await getAccountsFromServer();
-}
 
 /**
  * status of new task.

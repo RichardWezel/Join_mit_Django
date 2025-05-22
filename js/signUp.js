@@ -24,8 +24,8 @@ async function register() {
     if (passwordCheckStatus) {
       splitName(userName);
       register_btn.disabled = true;
-      saveNewUser();
-      await createContact();
+      creatNewUser(firstName, secondName, mail.value, password.value);
+      createNewUser(newUser)
       resetForm();
       registerSuccessfull.classList.remove("d-none");
       registerSuccessfull.innerHTML = "<h2>You Signed Up successfully</h2>";
@@ -41,13 +41,19 @@ async function register() {
   }
 }
 
+/**
+ * Checks if the name is valid.
+  * The name is valid if it is not empty and contains a space.
+  * If the name is valid, it returns true and hides the error message.
+  * If the name is not valid, it returns false and shows the error message.
+ * 
+ * @returns {Boolean} - Marks whether the name is valid or not.
+ */
 function checkName() {
   let fullName = document.getElementById('name').value.trim();
   let error_div = document.getElementById('errormessage_signup');
   let inputName = document.getElementById('name');
-  // Überprüfen, ob das Eingabefeld nicht leer ist und Leerzeichen vorhanden sind
   if (fullName !== '' && fullName.includes(' ')) {
-    // Wenn ja, trenne den Namen anhand des Leerzeichens 
     error_div.style.display = 'none';
     inputName.style.borderColor = '#ccc';
     return true;
@@ -104,10 +110,10 @@ function comparePassword() {
   if (
     document.getElementById("password").value ==
     document.getElementById("confirm_password").value
-  ) {
-    document.getElementById("password_message").style.color = "green";
-    document.getElementById("password_message").innerHTML = "Password match!";
-    passwordCheckStatus = true;
+    ) {
+      document.getElementById("password_message").style.color = "green";
+      document.getElementById("password_message").innerHTML = "Password match!";
+      passwordCheckStatus = true;
   } else {
     document.getElementById("password_message").style.color = "red";
     document.getElementById("password_message").innerHTML =
