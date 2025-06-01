@@ -15,7 +15,7 @@ function isMaxWidth1000() {
  * 
  */
 async function init() {
-  await includeHTML(); // @include.js
+  await includeHTML();
   if(isMaxWidth1000() == true) {
     await greeting()
     await setUserInitialsAtHeader(); //@include.js
@@ -46,8 +46,8 @@ async function greeting() {
     let container = document.getElementById('good_morning_container');
     let text = document.getElementById('good_morning_text');
     let user = document.getElementById('user_name_first')
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     summary_container.style.display = 'none';
-    await getCurrentUserIdFromSessionStorage();
     saveCurrentUserIdInSessionStorage(currentUserId);
     if (currentUserId == 1) {
       text.innerHTML = 'Good morning!';
@@ -211,6 +211,7 @@ function renderUrgentAmount() {
 
 function renderUserName() {
   let userNameElement = document.getElementById("user_name");
+  let currentUserId = getCurrentUserIdFromSessionStorage();
   if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser[0] == '' || currentUserId == 1) {
     userNameElement.innerHTML = `Guest`;
   } else if (typeof currentUser.second_name == "undefined") {

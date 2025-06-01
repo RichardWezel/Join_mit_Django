@@ -7,6 +7,7 @@ let dropdown_status_assignedTo = false;
  * Builds the dropdown list. Sets (You)
  */
 async function renderDropList() {
+  let currentUser = await getCurrentUserFromSessionStorage();
   await getCurrentUserIdFromSessionStorage();
   let dropdown = document.getElementById("dropdown");
   dropdown.innerHTML = "";

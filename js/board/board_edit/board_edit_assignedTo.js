@@ -187,6 +187,7 @@ function searchContacts(taskId) {
  */
 function showContactList(taskId, searchValue) {
     let container = document.getElementById('selectedContactsSection');
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     container.innerHTML = '';
     for (let i = 0; i < loaded_contacts.length; i++) {
         if (!searchValue || 

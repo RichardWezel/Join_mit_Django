@@ -97,10 +97,10 @@ function filterTasks(toDo, inProgress, awaitFeedback, done, search_content) {
  * @param {HTMLElement} task - JSON Object of tasks array
  * @param {Number} taskId - Index of task in tasks array
  */
-function addTaskElementToBoard(columns_status, task, taskId) {
-    columns_status.innerHTML += taskHTML(task, taskId);
-    limitNumberOfCharacters(`task_description${taskId}`, 45);
-    renderTaskElements(taskId)
+function addTaskElementToBoard(columns_status, task, taskIndex) {
+    columns_status.innerHTML += taskHTML(task, taskIndex);
+    limitNumberOfCharacters(`task_description${taskIndex}`, 45);
+    renderTaskElements(taskIndex)
 }
 
 /**
@@ -125,33 +125,33 @@ function limitNumberOfCharacters(id, maxZeichen) {
  * @param {Number} taskId - Index of task in tasks array
  * @returns {String} HTML structure of tasks in the columns of Kanban Board
  */
-function taskHTML(task, taskId) {
+function taskHTML(task, taskIndex) {
     let category = task.category;
     let title = task.title;
     let description = task.description;
     let status = task.status;
     return /*html */`
-    <article 
-    id="task${taskId}" 
-    onclick="openTaskDetailsDialog(${taskId})" 
-    draggable="true" 
-    ondragstart="startDragging(${taskId}, '${status}', event)" 
-    ondragend="deleteBorderStyles()" 
-    ontouchmove="handleTouchMove(event, ${taskId})"
-    ontouchstart="touchStart(${taskId}, '${status}', event)" 
-    ontouchend="touchEnd(event)" 
-    class="task">
-    <div id="task_category${taskId}" class="task_category">${category}</div>
-    <div class="task_title">${title}</div>
-    <div id="task_description${taskId}" class="task_description">${description}</div>
-    <div id="task_progressbar${taskId}" class="task_progress"></div>
-    <div class="task_members_prio">
-        <div id="task_member_section${taskId}" class="task_members"></div>
-        <div id="prio_icon${taskId}" class="task_prio">
-            <img src="" alt="">
-        </div>
-    </div>
-</article>
+        <article 
+            id="task${taskIndex}" 
+            onclick="openTaskDetailsDialog(${taskIndex})" 
+            draggable="true" 
+            ondragstart="startDragging(${taskIndex}, '${status}', event)" 
+            ondragend="deleteBorderStyles()" 
+            ontouchmove="handleTouchMove(event, ${taskIndex})"
+            ontouchstart="touchStart(${taskIndex}, '${status}', event)" 
+            ontouchend="touchEnd(event)" 
+            class="task">
+                <div id="task_category${taskIndex}" class="task_category">${category}</div>
+                <div class="task_title">${title}</div>
+                <div id="task_description${taskIndex}" class="task_description">${description}</div>
+                <div id="task_progressbar${taskIndex}" class="task_progress"></div>
+                <div class="task_members_prio">
+                    <div id="task_member_section${taskIndex}" class="task_members"></div>
+                    <div id="prio_icon${taskIndex}" class="task_prio">
+                        <img src="" alt="">
+                    </div>
+                </div>
+        </article>
     `
 }
 

@@ -18,7 +18,7 @@ async function init() {
     await setUserInitialsAtHeader();
     person = contacts_global;
     loadContacts();
-    await getCurrentUserIdFromSessionStorage();
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     if (currentUserId !== 1) {
         await setYou_contacts();
     }
@@ -86,7 +86,7 @@ function contactHTML(i, currentPerson, firstLetter, secondLetter) {
  */
 
 async function setYou_contacts() {
-    await getCurrentUserIdFromSessionStorage();
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     if (person[currentUserId].first_name == currentUser.first_name && person[currentUserId].second_name == currentUser.second_name) {
         let you = document.getElementById(`youContactList${currentUserId}`);
         you.innerHTML = "(You)";

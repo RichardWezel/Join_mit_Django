@@ -6,11 +6,11 @@
  */
 async function confirmInputsOfEditDialog(taskId) {
     getInputValuesOfEditDialog(); 
-    await loadChangedContentInTasksArray(taskId);
-    await setAndGetToServer(taskId); //@storage.js:55
+    updateTaskOnServer(currentTaskContent);
+    await getTasksOfServer();
     dialog_status = 'taskdetails';
     await deleteCurrentTaskContent();
-    renderDialogTask(taskId); // @board_dialog_taskdetails.js:24     
+    renderDialogTask(taskId);    
 }
 
 /**
@@ -58,8 +58,8 @@ function changedue_dateFormatInShortYear() {
  * 
  * @param {Number} taskId - - Index of task in tasks array
  */
-function loadChangedContentInTasksArray(taskId) {
-    tasks[taskId] = currentTaskContent;
+function loadChangedContentInTasksArray(taskIndex) {
+    tasks[taskIndex] = currentTaskContent;
 }
 
 /**

@@ -41,7 +41,7 @@ async function checkExistingUser() {
  * Sets and saves Index of currentUser in contacts_global at variable currentUserId.
  */
 async function setCurrentUserId() {
-  currentUserId = await findIndexOfCurrentUserInContacts_Global();
+  let currentUserId = await findIndexOfCurrentUserInContacts_Global();
   saveCurrentUserIdInSessionStorage(currentUserId);
   await getCurrentUserIdFromServer();
   console.log(`currentUserId: ${currentUserId}`);
@@ -70,6 +70,7 @@ async function findIndexOfCurrentUserInContacts_Global() {
  * lockedIn of the contact, which is equal to the currentUser, is set to true.
  */
 async function setLogIn_statusOfCurrentUser() {
+  let currentUserId = await getCurrentUserIdFromSessionStorage();
   await updateLockedIn(currentUserId, true)
   await getUsersOfServer()
 }
@@ -101,9 +102,9 @@ async function handleGuestLogIn() {
 }
 
 async function setCurrentUserToGuest() {
-  currentUserId = 1;
+  let currentUserId = 1;
   saveCurrentUserIdInSessionStorage(currentUserId);
-  currentUser = await getUserById(currentUserId);
+  let currentUser = await getUserById(currentUserId);
   console.log('currentUser: ', currentUser);
 }
 

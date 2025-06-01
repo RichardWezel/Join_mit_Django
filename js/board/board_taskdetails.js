@@ -22,6 +22,7 @@ async function openTaskDetailsDialog(taskId) {
  */
 async function renderDialogTask(taskId){
     let container = document.getElementById('task_dialog_container');
+    await getTasksOfServer();
     let task = tasks[taskId];
     container.innerHTML = taskDialogHTML(task, taskId);
     changedue_dateFormat(taskId);
@@ -138,12 +139,13 @@ function setColorOfCategoryInDialog(i) {
  * 
  * @param {Number} taskId - Index of current called task in tasks[] global array.
  */
-async function renderAssigedToDialog(taskId) {
+async function renderAssigedToDialog(taskIndex) {
     let container = document.getElementById('member_container_dialog');
     let main_container = document.getElementById('assigned_to_section_taskdetails');
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     await getContactsFromServer();
     container.innerHTML = '';
-    let task = tasks[taskId];
+    let task = tasks[taskIndex];
     if (task.contacts.length == 0) {
         main_container.classList.add('d-none')
     } else {
@@ -152,12 +154,12 @@ async function renderAssigedToDialog(taskId) {
         }
         for (let i = 0; i < task.contacts.length; i++) {
             let contact = task.contacts[i];
-            container.innerHTML += AssigedToDialogHTML(contact, taskId, i);
-            document.getElementById(`taskdetailscontact${taskId}${i}`).style.backgroundColor = `${contact.color}`;
+            container.innerHTML += AssigedToDialogHTML(contact, taskIndex, i);
+            document.getElementById(`taskdetailscontact${taskIndex}${i}`).style.backgroundColor = `${contact.color}`;
             if (currentUser !== '' && currentUserId !== 1) {
                 if (contact.first_name == contacts_global[currentUserId].first_name && 
                     contact.second_name == contacts_global[currentUserId].second_name) {
-                    await setYou_board_taskdetails(taskId, i);
+                    await setYou_board_taskdetails(taskIndex, i);
                 }
             }
             

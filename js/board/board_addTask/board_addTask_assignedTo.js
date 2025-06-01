@@ -198,6 +198,7 @@ function searchContacts_addTask() {
  * @param {String} searchValue 
  */
 async function showContactList_addTask(searchValue) {
+    let currentUserId = getCurrentUserIdFromSessionStorage();
     await getContactsFromServer();
     let container = document.getElementById('selectedContactsSection_addTask');
     container.innerHTML = '';

@@ -31,22 +31,42 @@ function setActiveLink() {
 }
 
 /**
- * Sets the initials of logged account in the head navbar in the top right corner.
- * currentUser is an Array in storage.js.
+ * Sets the initials of the current user in the header.
  */
 async function setUserInitialsAtHeader() {
-  let accountLogo = document.getElementById('navbarHeadIcon');
+  let currentUserId = getCurrentUserIdFromSessionStorage();
+  let firstName = currentUser.first_name;
+  let secondName = currentUser.second_name;
   if (currentUser.length === 0 || typeof currentUser == "undefined" || currentUser == '' || currentUserId == 1) {
+    let accountLogo = document.getElementById('navbarHeadIcon');
     accountLogo.innerHTML = 'G';
   } else if (typeof currentUser.second_name == "undefined" || typeof currentUser.second_name == '') {
-    let firstName = currentUser.first_name;
-    firstName = firstName.charAt(0);
-    accountLogo.innerHTML = `${firstName}`;
+    fallbackInitialsNoSecondName(firstName)
   } else {
-    let firstName = currentUser.first_name;
-    firstName = firstName.charAt(0);
-    let secondName = currentUser.second_name;
-    secondName = secondName.charAt(0);
-    accountLogo.innerHTML = `${firstName} ${secondName}`;
+    setInitialsFirstAndSecondChar(firstName, secondName);
   }
+}
+
+/**
+ * Sets the initials of the current user in the header when there is no second name.
+ * 
+ * @param {String} firstName - First name of the current user
+ */
+function fallbackInitialsNoSecondName(firstName) {
+  let accountLogo = document.getElementById('navbarHeadIcon');
+  let firstNameChar = firstName.charAt(0);
+    accountLogo.innerHTML = `${firstNameChar}`;
+}
+
+/**
+ * Sets the initials of the current user in the header with the first character of the first and second name.
+ * 
+ * @param {String} firstName - First name of the current user
+ * @param {String} secondName - Second name of the current user
+ */
+function setInitialsFirstAndSecondChar(firstName, secondName) {
+  let accountLogo = document.getElementById('navbarHeadIcon');
+  let firstNameChar = firstName.charAt(0);
+  let secondNameChar = secondName.charAt(0);
+  accountLogo.innerHTML = `${firstNameChar} ${secondNameChar}`;
 }

@@ -5,7 +5,6 @@ const STORAGE_URL = `https://remote-storage.developerakademie.org/item`;
 let tasks = [];
 let contacts_global = [];
 let currentUser = [];
-let currentUserId = '';
 let users = [];
 let newTask_status = false;
 let newUser;
@@ -53,7 +52,6 @@ async function getUserById(userId) {
   const url = `http://127.0.0.1:8000/api/users/${userId}/`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log('Received User by ID from backend:', data); 
   return data;
 }
 
@@ -139,10 +137,8 @@ function getCurrentUserIdFromSessionStorage() {
   
   if (storedId !== null) {
     const currentUserId = parseInt(storedId, 10);
-    console.log('Loaded Current User Id from sessionStorage:', currentUserId);
     return currentUserId;
   } else {
-    console.warn('No currentUserId found in sessionStorage.');
     return null;
   }
 }
@@ -158,9 +154,7 @@ function saveCurrentUserIdInSessionStorage(currentUserId) {
     console.error("Invalid currentUserId:", currentUserId);
     return;
   }
-  
   sessionStorage.setItem('currentUserId', currentUserId.toString());
-  console.log('Saved Current User Id in sessionStorage:', currentUserId);
 }
 
 
@@ -170,9 +164,7 @@ async function getTasksOfServer() {
   const url = `http://127.0.0.1:8000/api/tasks/`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log('Received Tasks from backend:', data); 
   tasks = data;
-  console.log('Tasks loaded:', tasks);
   return data;
 }
 
@@ -202,6 +194,43 @@ async function savesTasksOnServer(taskId) {
     return res.json();
   });
 }
+
+function updateTaskOnServer(taskContent) {
+  if (!taskContent || typeof taskContent !== "object") {
+    console.error("Invalid taskContent:", taskContent);
+    return;
+  }
+
+  const taskId = taskContent.id;
+  if (typeof taskId !== "number" || taskId < 0) {
+    console.error("Invalid taskId in taskContent:", taskId);
+    return;
+  }
+
+  const url = `http://127.0.0.1:8000/api/tasks/${taskId}/`; // Korrigiert hier!
+
+  fetch(url, {
+    method: "PATCH", // oder PATCH wenn du nur Teilupdates machst
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(taskContent),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+      return response.json(); // Antwort parsen
+    })
+    .then((data) => {
+      console.log("Task erfolgreich aktualisiert:", data);
+    })
+    .catch((error) => {
+      console.error("Fehler beim Updaten der Task:", error);
+    });
+}
+
+
 
 
 
@@ -303,7 +332,6 @@ async function getContactsFromServer() {
   const url = `http://127.0.0.1:8000/api/contacts/`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log('Received Contacts from backend:', data); 
   contacts_global = data;
   return data;
 }
@@ -360,7 +388,6 @@ async function getNewTask_statusFromServer() {
   const url = `http://127.0.0.1:8000/api/task_status/`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log('Received task_status from backend:', data); 
   if (data.length === 0) {
     console.warn('No task_status object found!');
     return;
