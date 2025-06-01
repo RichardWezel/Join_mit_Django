@@ -1,31 +1,37 @@
 
 /**
- * Global Variable with the current dragged task as Index of tasks[]
+ * Contains the Index of the current dragged task in tasks[] global array.
+ * This variable is used to identify which task is currently being dragged in the Kanban board.  
  * 
- * @type {number}
+ * @type {number} - Index of the current dragged task in tasks[] global array
  */
 let currentDraggedElement;
 
 /**
- * Saves the status which shows, whether the dialog is showing taskdetails or editing fields.
+ * This variable is used to control the dialog state in the Kanban board.
+ * It can have three different values:
+ * - 'inactive': The dialog is not open.
+ * - 'taskdetails': The dialog is open and displays the task details.
+ * - 'edit': The dialog is open and allows the user to edit the task content.
  * 
- * @type {String} - 3 conditions: 'inactive' (dialog not open); 'taskdetails' (shows taskdetails); 'edit' (dialog to change content).
+ * @type {String} - The current status of the dialog in the Kanban board.
  */
 let dialog_status = 'inactive';
 
-
-
 /**
- * Load content of tasks.json in global array tasks[]. 
- * Initialize rendering content of Kanban Board.
+ * This function initializes the Kanban board by performing several asynchronous operations:
+ * 1. It retrieves the current user ID from the server.
+ * 2. It includes the HTML content of the board.
+ * 3. It sets the user's initials in the header.
+ * 4. It fetches the tasks from the server and stores them in the `tasks` array.
+ * 5. It saves the current user ID on the server.
  */
 async function init_board() {
-    await getCurrentUserIdFromServer();
-    console.log('currentUserId is: ', currentUserId)
+    await getCurrentUserIdFromSessionStorage();
     await includeHTML();
     await setUserInitialsAtHeader(); // @include.js:39
     await getTasksOfServer(); // @storage.js:56
-    await saveCurrentUserIdOnServer(); // @storage.js:56
+    saveCurrentUserIdInSessionStorage(currentUserId);
     await renderColumnContent(); // @board_main_renderTasks.js:7
     await toastMessageNewTask(); 
 }

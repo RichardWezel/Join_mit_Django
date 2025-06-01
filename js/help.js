@@ -2,6 +2,6 @@
  * Loads initials in sidebar.
  */
 async function initHelp() {
-    await getCurrentUserIdFromServer();
+    await getCurrentUserIdFromSessionStorage();
     await setUserInitialsAtHeader();
 }

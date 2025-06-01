@@ -12,7 +12,6 @@ async function handleLogIn() {
   if (currentUser == "") {
     showToastMessage_UserOrMailNotExist();
   } else {
-    await setCurrentUserId(); // set currentUserId
     await setLogIn_statusOfCurrentUser(); // set logIn status of currentUser in contacts_global
     setInterval(() => {
       window.location.href = "summary.html";
@@ -25,29 +24,16 @@ async function handleLogIn() {
  * By match currentUser is filled with matched user data.
  */
 async function checkExistingUser() {
-  await loadUsers();
+  await getUsersOfServer();
   for (let i = 0; i < users.length; i++) {
     let user = users[i];
     // comparing of users vs. inputfields
     if (user.mail == mail.value && user.password == password.value) {
-      currentUser = JSON.parse(JSON.stringify(user));
-      await saveCurrentUserOnServer();
-      await getCurrentUserIdFromServer();
+      currentUser = user;
+      currentUserId = user.id;
+      saveCurrentUserIdInSessionStorage(currentUserId)
+      await getCurrentUserIdFromSessionStorage();
     }
-  }
-}
-
-/**
- * Gets the account data from Server and save this at users[] @storage.js.
- */
-async function loadUsers() {
-  try {
-    let ServerData;
-    ServerData = await getUsersFromServer();
-    let newData = ServerData.data;
-    users = JSON.parse(JSON.stringify(newData));
-  } catch (e) {
-    console.warn("Could not load users!");
   }
 }
 
@@ -56,7 +42,7 @@ async function loadUsers() {
  */
 async function setCurrentUserId() {
   currentUserId = await findIndexOfCurrentUserInContacts_Global();
-  await saveCurrentUserIdOnServer();
+  saveCurrentUserIdInSessionStorage(currentUserId);
   await getCurrentUserIdFromServer();
   console.log(`currentUserId: ${currentUserId}`);
 }
@@ -84,29 +70,24 @@ async function findIndexOfCurrentUserInContacts_Global() {
  * lockedIn of the contact, which is equal to the currentUser, is set to true.
  */
 async function setLogIn_statusOfCurrentUser() {
-  resetLogIn_status();
-  await setNewLogIn_status();
+  await updateLockedIn(currentUserId, true)
+  await getUsersOfServer()
 }
 
+
 /**
- * Iterates through contacts_global and set all "lockedIn" keys to false.
+ * Sucht den Index eines Benutzers im users-Array anhand der ID.
+ * 
+ * @param {Number} searchId - Die gesuchte Benutzer-ID
+ * @returns {Number|null} - Der Index im Array oder null, wenn nicht gefunden
  */
-function resetLogIn_status() {
-  for (let i = 0; i < contacts_global.length; i++) {
-    contacts_global[i].lockedIn = false;
+function findUserIndexById(searchId) {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].id === searchId) {
+      return i;
+    }
   }
-}
-
-/**
- * Iterates through contacts_global. If a currentUser exist, compares the function the contacts with currentUser.
- * By match the lockedIn_status is true.
- * Saves the changes at server.
- */
-async function setNewLogIn_status() {
-  let contact = contacts_global[currentUserId];
-  contact.lockedIn = true;
-  await setContactsToServer();
-  await getContactsFromServer();
+  return null; // Falls kein passender User gefunden wurde
 }
 
 /* Gueat Login */
@@ -121,7 +102,7 @@ async function handleGuestLogIn() {
 
 async function setCurrentUserToGuest() {
   currentUserId = 1;
-  await saveCurrentUserIdOnServer();
+  saveCurrentUserIdInSessionStorage(currentUserId);
   currentUser = await getUserById(currentUserId);
   console.log('currentUser: ', currentUser);
 }

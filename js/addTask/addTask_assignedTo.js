@@ -7,7 +7,7 @@ let dropdown_status_assignedTo = false;
  * Builds the dropdown list. Sets (You)
  */
 async function renderDropList() {
-  await getCurrentUserIdFromServer();
+  await getCurrentUserIdFromSessionStorage();
   let dropdown = document.getElementById("dropdown");
   dropdown.innerHTML = "";
   for (let i = 0; i < contacts_addTask.length; i++) {

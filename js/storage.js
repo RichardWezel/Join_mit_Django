@@ -115,55 +115,52 @@ async function deleteUser(userId) {
   );
 }
 
+async function updateLockedIn(userId, newStatus) {
+  let index = findUserIndexById(userId);
+  if (index !== null) {
+    users[index].locked_in = newStatus;
+    await saveUserOnServer(userId, { locked_in: newStatus }); // nur das Feld, wenn du nicht alles schicken willst
+    console.log(`locked_in für User mit ID ${userId} wurde auf ${newStatus} gesetzt.`);
+  } else {
+    console.warn(`User mit ID ${userId} nicht gefunden.`);
+  }
+}
+
 
 // ***** current_user ***** //
 
-
 /**
- * Loads the currentUser from Server and save this in curentUser @storage.js.
+ * Loads the currentUserId from sessionStorage.
  * 
- * @returns {JSON} - currentUser
+ * @returns {Integer|null} currentUserId
  */
-async function getCurrentUserIdFromServer() {
-  const url = `http://127.0.0.1:8000/api/current_user/`;
-  const res = await fetch(url);
-  const data = await res.json();
-  console.log('Received Current User Id from backend:', data); 
-  currentUserId = data[0].currentUserIndex;
-  return currentUserId;
+function getCurrentUserIdFromSessionStorage() {
+  const storedId = sessionStorage.getItem('currentUserId');
+  
+  if (storedId !== null) {
+    const currentUserId = parseInt(storedId, 10);
+    console.log('Loaded Current User Id from sessionStorage:', currentUserId);
+    return currentUserId;
+  } else {
+    console.warn('No currentUserId found in sessionStorage.');
+    return null;
+  }
 }
 
-/**
- * Saves the currentUser data to server.
- * 
- * @param {Integer} current_userIndex 
- * @returns res.json()
- */
-async function saveCurrentUserIdOnServer() {
-  const url = `http://127.0.0.1:8000/api/current_user/1/`;
 
+/**
+ * Saves the currentUserId to sessionStorage.
+ * 
+ * @param {Integer} currentUserId 
+ */
+function saveCurrentUserIdInSessionStorage(currentUserId) {
   if (typeof currentUserId !== "number") {
     console.error("Invalid currentUserId:", currentUserId);
     return;
   }
-
-  return fetch(url, {
-    method: "PATCH", 
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      currentUserIndex: currentUserId,
-    }),
-  }).then(res => {
-    if (!res.ok) {
-      return res.json().then(err => {
-        console.error("Backend error:", err);
-        throw new Error(`Error while saving the current user: ${res.status}`);
-      });
-    }
-    return res.json();
-  });
+  
+  sessionStorage.setItem('currentUserId', currentUserId.toString());
+  console.log('Saved Current User Id in sessionStorage:', currentUserId);
 }
 
 
@@ -175,15 +172,25 @@ async function getTasksOfServer() {
   const data = await res.json();
   console.log('Received Tasks from backend:', data); 
   tasks = data;
+  console.log('Tasks loaded:', tasks);
   return data;
 }
 
 async function savesTasksOnServer(taskId) {
-  const url = `http://127.0.0.1:8000/api/tasks/${taskId}/`;
-  const taskData = tasks[taskId];
+  if (typeof taskId !== "number" || taskId < 0 || taskId >= tasks.length) {
+    console.error("Invalid taskId:", taskId);
+    return;
+  }
+  if (!tasks[taskId] || typeof tasks[taskId] !== "object") {
+    console.error("Invalid task data for taskId:", taskId, tasks[taskId]);
+    return;
+  }
+
+  const url = `http://127.0.0.1:8000/api/tasks/${tasks[taskId].id}/`;
+  const taskData = prepareTaskDataForSave(tasks[taskId]);
 
   return fetch(url, {
-    method: "PUT",
+    method: "PATCH", // <-- HIER PATCH STATT PUT
     headers: {
       "Content-Type": "application/json"
     },
@@ -196,8 +203,35 @@ async function savesTasksOnServer(taskId) {
   });
 }
 
+
+
+function prepareTaskDataForSave(task) {
+  const { id, ...taskDataWithoutId } = task;
+
+  const contacts = task.contacts.map(contact => contact.id);
+
+  const dueDateParts = task.due_date.split('/');
+  let dueDateISO = `20${dueDateParts[2]}-${dueDateParts[1]}-${dueDateParts[0]}`;
+
+  return {
+    ...taskDataWithoutId,
+    due_date: dueDateISO,
+    contacts: contacts,
+    // Hier wichtig: Subtasks mit id beibehalten
+    subtasks: task.subtasks.map(subtask => ({
+      id: subtask.id,  // ID darf mit
+      name: subtask.name,
+      done: subtask.done,
+    }))
+  };
+}
+
+
+
+
 async function deleteTask(taskId) {
-  const url = `http://127.0.0.1:8000/api/tasks/${taskId}/`;
+  let taskIndex = taskId + 1; // Assuming taskId is zero-based and API expects one-based index
+  const url = `http://127.0.0.1:8000/api/tasks/${taskIndex}/`;
   return fetch(url, {
     method: "DELETE",
     headers: {

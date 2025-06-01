@@ -47,8 +47,8 @@ async function greeting() {
     let text = document.getElementById('good_morning_text');
     let user = document.getElementById('user_name_first')
     summary_container.style.display = 'none';
-    await getCurrentUserIdFromServer();
-    await saveCurrentUserIdOnServer();
+    await getCurrentUserIdFromSessionStorage();
+    saveCurrentUserIdInSessionStorage(currentUserId);
     if (currentUserId == 1) {
       text.innerHTML = 'Good morning!';
     } else {
@@ -76,7 +76,7 @@ function timeout(ms) {
 async function loadServerData() {
   await getContactsFromServer();
   await getTasksOfServer();
-  await getCurrentUserIdFromServer();
+  await getCurrentUserIdFromSessionStorage();
 }
 
 function calcValuesOfSummery() {

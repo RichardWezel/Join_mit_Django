@@ -7,7 +7,7 @@
 async function confirmInputsOfEditDialog(taskId) {
     getInputValuesOfEditDialog(); 
     await loadChangedContentInTasksArray(taskId);
-    await setAndGetToServer(); //@storage.js:55
+    await setAndGetToServer(taskId); //@storage.js:55
     dialog_status = 'taskdetails';
     await deleteCurrentTaskContent();
     renderDialogTask(taskId); // @board_dialog_taskdetails.js:24     

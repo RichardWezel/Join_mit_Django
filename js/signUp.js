@@ -18,27 +18,62 @@ async function init() {
 
 
 async function register() {
-  checkName();
-  if (checkName() == true) {
-    comparePassword();
-    if (passwordCheckStatus) {
-      splitName(userName);
-      register_btn.disabled = true;
-      creatNewUser(firstName, secondName, mail.value, password.value);
-      createNewUser(newUser)
-      resetForm();
-      registerSuccessfull.classList.remove("d-none");
-      registerSuccessfull.innerHTML = "<h2>You Signed Up successfully</h2>";
-      setInterval(() => {
-        window.location.href = "index.html";
-      }, 800);
+  if (nameValidation() == true) {
+    if (passwordValidation() == true) {
+      if (checkbox.checked == true) {
+        await saveUserData();
+        await createUser();
+        await createContact();
+        userfeedback();
+        navigateToHome();
+      } else {
+        console.log('please check the box!')
+      }
     } else {
       document.getElementById("password_message").innerHTML =
-      "Passwords do not match. Please check and try again!";
+        "Passwords do not match. Please check and try again!";
+        window.location.hash = 'confirm_password';
     }
   } else {
+    document.getElementById("password_message").innerHTML =
+    "Passwords do not match. Please check and try again!";
     window.location.hash = 'name';
   }
+}
+  
+function passwordValidation() {
+  let password = document.getElementById("password").value;
+  let confirm_password = document.getElementById("confirm_password").value;
+  if (password.length < 8) {
+    password_message.innerHTML =
+      "Password must be at least 8 characters long.";
+    return false;
+  } else if (password !== confirm_password) {
+    password_message.innerHTML = "Passwords do not match.";
+    return false;
+  } else {
+    password_message.innerHTML = "";
+    return true;
+  }
+}
+
+function navigateToHome() {
+  setInterval(() => {
+    window.location.href = "index.html";
+  }, 800)
+} 
+
+
+async function createUser() {
+  splitName(userName);
+  creatNewUser(firstName, secondName, mail.value, password.value);
+}
+
+function userfeedback() {
+  register_btn.disabled = true;
+  resetForm();
+  registerSuccessfull.classList.remove("d-none");
+  registerSuccessfull.innerHTML = "<h2>You Signed Up successfully</h2>";
 }
 
 /**
@@ -49,7 +84,7 @@ async function register() {
  * 
  * @returns {Boolean} - Marks whether the name is valid or not.
  */
-function checkName() {
+function nameValidation() {
   let fullName = document.getElementById('name').value.trim();
   let error_div = document.getElementById('errormessage_signup');
   let inputName = document.getElementById('name');
@@ -113,12 +148,12 @@ function comparePassword() {
     ) {
       document.getElementById("password_message").style.color = "green";
       document.getElementById("password_message").innerHTML = "Password match!";
-      passwordCheckStatus = true;
+      return true;
   } else {
     document.getElementById("password_message").style.color = "red";
     document.getElementById("password_message").innerHTML =
       "Password do not match!";
-    passwordCheckStatus = false;
+    return false;
   }
 }
 
