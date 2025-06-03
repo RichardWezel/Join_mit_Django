@@ -168,33 +168,6 @@ async function getTasksOfServer() {
   return data;
 }
 
-async function savesTasksOnServer(taskId) {
-  if (typeof taskId !== "number" || taskId < 0 || taskId >= tasks.length) {
-    console.error("Invalid taskId:", taskId);
-    return;
-  }
-  if (!tasks[taskId] || typeof tasks[taskId] !== "object") {
-    console.error("Invalid task data for taskId:", taskId, tasks[taskId]);
-    return;
-  }
-
-  const url = `http://127.0.0.1:8000/api/tasks/${tasks[taskId].id}/`;
-  const taskData = prepareTaskDataForSave(tasks[taskId]);
-
-  return fetch(url, {
-    method: "PATCH", // <-- HIER PATCH STATT PUT
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(taskData),
-  }).then(res => {
-    if (!res.ok) {
-      throw new Error(`Error while saving the task: ${res.status}`);
-    }
-    return res.json();
-  });
-}
-
 function updateTaskOnServer(taskContent) {
   if (!taskContent || typeof taskContent !== "object") {
     console.error("Invalid taskContent:", taskContent);
@@ -311,15 +284,6 @@ function sortTasksContacts() {
     });
   }
 }
-
-/**
- * Saves and loads the tasks to and from server.
- */
-async function setAndGetToServer(taskId) {
-  await savesTasksOnServer(taskId);
-  await getTasksOfServer();
-}
-
 
 // ***** contacts ***** //
 
@@ -449,58 +413,19 @@ async function getAccountsFromServer() {
 }
 
 
-/**
- * status of new task.
- */
-statusBymobile_addTask_board = "toDo";
+// Standardwert setzen, wenn Session noch leer ist
+statusBymobile_addTask_board = loadStatusFromSessionStorage() || "toDo";
 
 /**
- * Push status for new task to Server
+ * Save status to Session Storage
  */
-async function setStatusToServer() {
-  await setItem('status', statusBymobile_addTask_board);   
+function saveStatusToSessionStorage(status) {
+  sessionStorage.setItem("newTaskStatus", status);
 }
 
 /**
- * Load status for new task from Server 
+ * Load status from Session Storage
  */
-async function getStatusFromServer() {
-  try {
-    let newData = getStatusFromServer();
-    if (newData.length === 0) {
-      console.warn('No status object found!');
-      return;
-    }
-    statusBymobile_addTask_board = newData;
-  } catch (e) {
-    console.warn("Could not load status for new task!");
-  }
+function loadStatusFromSessionStorage() {
+  return sessionStorage.getItem("newTaskStatus");
 }
-
-
-/**
- * Sets key with value on Server with own token.
- * 
- * @param {String} key 
- * @param {String} value 
- * @returns 
- */
-// async function setItem(key, value) {
-//   const payload = { key, value, token: STORAGE_TOKEN };
-//   return fetch(STORAGE_URL, {
-//     method: "POST",
-//     body: JSON.stringify(payload),
-//   }).then((res) => res.json());
-// }
-
-/**
- * Get Value of Key from Server
- * 
- * @param {String} key - Name of Storage that is saved on server
- * @returns {JSON} 
- */
-// async function getItem(key) {
-//   const url = `${STORAGE_URL}?key=${key}&token=${STORAGE_TOKEN}`;
-//   return fetch(url)
-//     .then((res) => res.json())
-// }

@@ -56,7 +56,7 @@ async function validationOfAllInputs() {
 async function initCreateNewTask() {
     saveNewTask();
     await tasks.push(newTask_board); // @storage.js:32
-    await setAndGetToServer(); // @board_main.js:498
+    await getTasksOfServer(); // @board_main.js:498
     await toastmessage();
     resetSettings();
     await closeDialog(); // @board_dialog_taskdetails.js:25

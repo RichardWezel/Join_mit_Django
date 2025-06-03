@@ -14,7 +14,7 @@ async function openAddTaskDialog(status){
     dialog_status = 'addTask';
     await renderAddTaskDialog();  
     container.classList.remove('d-none');
-    await getTasksFromServer();
+    await getTasksOfServer();
     if(typeof status !== 'undefined') {
         addStatus(status);
     }
@@ -43,7 +43,7 @@ function renderAddTaskDialog() {
  * @returns {HTMLDivElement} - dialog HTML
  */
 function addTaskDialogHTML() {
-    return /*html*/`
+    return `
     <div class="addTask_dialog_container">
         <!-- header -->
         <div class="addTask_dialog_box_head">
@@ -145,7 +145,7 @@ function renderdue_dateEditDialog_addTask() {
  * @returns {HTMLDivElement}
  */
 function due_dateEditDialogHTML_addTask() {
-    return /*html*/`
+    return `
         <div class="header_text_edit_section">Due Date<span class="red_star">*</span></div>
         <form>
             <input class="" onfocusout="due_datevalidation_addTask()" placeholder="dd/mm/yyyy" id="edit_input_due_date_addTask" type="date"  required>
@@ -245,7 +245,7 @@ function renderCategoryAddTaskDialog() {
  * @returns {HTMLDivElement}
  */
 function categoryAddTaskDialogHTML() {
-    return /*html */`
+    return `
         <label class="header_text_edit_section">Category<span class="red_star">*</span></label>
         <div class="category_section">
             <div id="category_addTask_section_dropdown">
@@ -339,7 +339,7 @@ function renderCommitSection_addTask() {
  * @returns {HTMLDivElement}
  */
 function commitSectionHTML() {
-    return /*html */`
+    return `
             <p><span class="red_star">*</span>This Field is required</p>
             <div class="addTask_btns">
               <button onclick="clearInputsAddTaskDialog()" class="btn_transparent addTask_btn btn_gab">Clear <span>

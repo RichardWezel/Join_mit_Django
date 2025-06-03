@@ -12,28 +12,46 @@ let newTask = {
   "status": "",
 };
 
+// Main json structure of new task with example values
+// {
+//   "title": "Meeting vorbereiten",
+//   "description": "Vorbereitung für das große Meeting",
+//   "category": "Work",
+//   "due_date": "03/06/25",    // beachte das Datumsformat: TT/MM/JJ
+//   "priority": "high",
+//   "status": "open",
+//   "contacts": [
+//     1, 2, 5       // IDs der Kontakte, KEINE komplexen Objekte, nur IDs!
+//   ],
+//   "subtasks": [
+//     {
+//       "title": "Folien erstellen",
+//       "description": "PowerPoint vorbereiten",
+//       "is_done": false
+//     },
+//     {
+//       "title": "Raum buchen",
+//       "description": "Meetingraum reservieren",
+//       "is_done": true
+//     }
+//   ]
+// }
+
 /**
  * Initializes creating a new task.
  */
 async function initNewTask() {
-  validateInputs();
   if (
     validation('titleAddtask', 'validation_text_title') == true &&
     validation('AddTaskDate', 'validation_text_due_date') == true &&
     validation('categoryDropDownBtn', 'validation_text_category') == true) {
-    console.log('All required inpiut fields are valide!')
-    await createNewTask();
+    await createNewTaskInit();
+  }
+  else {
+    console.error("Validation failed. Please check your inputs.");
   }
 }
 
-/**
- * Initializes the validation functions for title, due date and category.
- */
-function validateInputs() {
-  validation('titleAddtask', 'validation_text_title');
-  validation('AddTaskDate', 'validation_text_due_date');
-  validation('categoryDropDownBtn', 'validation_text_category');
-}
 
 /**
  * Validates the input fields of the transmitted ids to see whether an input is present. 
@@ -52,23 +70,37 @@ function validation(inputId, errortextId) {
     return false;
   }
   if (input.value === '' ) {
-    window.location.hash = inputId;
-    input.classList.add('red-border');
-    errortext.style.visibility = "visible";
+    invalidateInput(inputId, errortextId);
     return false;
   } else {
-    input.classList.remove('red-border');
-    errortext.style.visibility = "hidden";
-    return true;
+    return validateInput(inputId, errortextId)
   }
 }
+
+function invalidateInput(inputId, errortextId) {
+  let input = document.getElementById(inputId);
+  let errortext = document.getElementById(errortextId);
+  input.classList.add('red-border');
+  errortext.style.visibility = "visible";
+  window.location.hash = inputId;
+  return false;
+}
+
+function validateInput(inputId, errortextId) {
+  let input = document.getElementById(inputId);
+  let errortext = document.getElementById(errortextId);
+  input.classList.remove('red-border');
+  errortext.style.visibility = "hidden";
+  return true;
+}
+
   
 /**
  * Initials the functions to save the new task.
  * Sets the newTask status on true to start the toast message on borad html.
  * Changes to board.html
  */
-async function createNewTask() {
+async function createNewTaskInit() {
   await saveNewTask();
   await deleteNewTaskContent();
   await removeAllInputes();
@@ -82,8 +114,7 @@ async function createNewTask() {
  */
 async function saveNewTask() {
   await getAllSettingsOfNewTask();
-  await pushNewTaskToTasks();
-  await setTasksToServer();
+  await createNewTask(newTask);
   await getTasksFromServer();
 }
 
@@ -136,6 +167,31 @@ function getCategory() {
   newTask.category = pushCategory;
 }
 
+// {
+//   "title": "Meeting vorbereiten",
+//   "description": "Vorbereitung für das große Meeting",
+//   "category": "Work",
+//   "due_date": "03/06/25",    // beachte das Datumsformat: TT/MM/JJ
+//   "priority": "high",
+//   "status": "open",
+//   "contacts": [
+//     1, 2, 5       // IDs der Kontakte, KEINE komplexen Objekte, nur IDs!
+//   ],
+//   "subtasks": [
+//     {
+//       "title": "Folien erstellen",
+//       "description": "PowerPoint vorbereiten",
+//       "is_done": false
+//     },
+//     {
+//       "title": "Raum buchen",
+//       "description": "Meetingraum reservieren",
+//       "is_done": true
+//     }
+//   ]
+// }
+
+
 /**
  * Saves the choosen contacts to the new task.
  */
@@ -145,10 +201,10 @@ function getContacts() {
     let contact = contacts_addTask[i];
     if (contact.select_status == true) {
       delete contact.select_status;
-      selected_contacts.push(contact.name);
+      selected_contacts.push(contact.id);
     }
-  newTask.contacts = selected_contacts;
   }
+  newTask.contacts = selected_contacts;
 }
 
 /**
@@ -169,15 +225,7 @@ function getSubtask() {
  * Saves the status of the new task.
  */
 async function getStatus() {
-  await getStatusFromServer();
   newTask.status = statusBymobile_addTask_board;
-}
-
-/**
- * Pushes the new task to the main tasks array.
- */
-function pushNewTaskToTasks() {
-  tasks.push(newTask);
 }
 
 /**
@@ -194,8 +242,7 @@ async function deleteNewTaskContent() {
     "subtasks": [],
     "status": ""
   }
-  statusBymobile_addTask_board = "toDo";
-  await setStatusToServer();
+  saveStatusToSessionStorage("toDo");
 }
 
 /**
@@ -203,7 +250,7 @@ async function deleteNewTaskContent() {
  */
 function removeAllInputes() {
   // Remove the Add Task inputs
-  prio = [];
+  prio = '';
   pushCategory = [];
   subtasklists = [];
   rendersubtasklist();

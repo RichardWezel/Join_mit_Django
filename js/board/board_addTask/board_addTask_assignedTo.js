@@ -43,7 +43,11 @@ async function loadContacts_addTask() {
  */
 function reduceContactKeysToImportant() {
     for (let i = 0; i < contacts_addTask.length; i++) {
-        contacts_addTask[i] = contacts_addTask[i]["name"];
+        contacts_addTask[i] = {
+            "id": contacts_addTask[i]["id"],
+            "firstName": contacts_addTask[i]["first_name"],
+            "secondName": contacts_addTask[i]["second_name"],
+        };
     }
 }
 

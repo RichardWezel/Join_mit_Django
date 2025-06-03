@@ -7,14 +7,13 @@ let dropdown_status_assignedTo = false;
  * Builds the dropdown list. Sets (You)
  */
 async function renderDropList() {
-  let currentUser = await getCurrentUserFromSessionStorage();
-  await getCurrentUserIdFromSessionStorage();
+  let currentUserId = await getCurrentUserIdFromSessionStorage();
   let dropdown = document.getElementById("dropdown");
   dropdown.innerHTML = "";
   for (let i = 0; i < contacts_addTask.length; i++) {
     let contact = contacts_addTask[i];
     dropdown.innerHTML += dropdownHtml(contact, i);
-    if (currentUser !== '' && currentUserId !== 1 || currentUser !== 1 && currentUserId !== 1) {
+    if (currentUserId !== '' && currentUserId !== 1 || currentUserId !== undefined) {
       if (contact.first_name == contacts_global[currentUserId].first_name && 
           contact.second_name == contacts_global[currentUserId].second_name || 
           contact.first_name == contacts_global[currentUserId].first_name && 
@@ -42,8 +41,7 @@ function setYou_addTask(contactId) {
  * @returns {HTMLAnchorElement}
  */
 function dropdownHtml(contact, contactId) {
-  contact = contact.name;
-  let secondName = contact.secondName;
+  let secondName = contact.second_name;
   if (typeof secondName == 'undefined') {
     secondChar = '';
     secondName = '';
@@ -56,11 +54,11 @@ function dropdownHtml(contact, contactId) {
       <div class="display_center gap ">
         <div class="member_cicle_main">
           <div class="member_cicle" style='background-color:${contact.color};'>
-            ${contact.firstName.charAt(0)}
+            ${contact.first_name.charAt(0)}
             ${secondChar}
           </div>
         </div>
-        <div class="member_name">${contact.firstName} ${secondName} <div id="you${contactId}" class="you"></div></div>
+        <div class="member_name">${contact.first_name} ${secondName} <div id="you${contactId}" class="you"></div></div>
       </div> 
       <!-- checkbox -->
       <div class="dropdown_img" id="selected_img${contactId}">

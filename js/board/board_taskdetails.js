@@ -323,7 +323,7 @@ function renderSubtaskImage(taskId, subtaskIndex) {
  */
 async function deleteTask(taskId) {
     await tasks.splice(taskId, 1);
-    await setAndGetToServer();
+    await getTasksOfServer();
     closeDialog(taskId);
     init_board();
 }

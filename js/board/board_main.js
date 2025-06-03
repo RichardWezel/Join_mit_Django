@@ -128,9 +128,7 @@ async function closeDialog(taskId) {
  * Link to the add task html site.
  */
 async function redirectToTaskPage(status) {
-    statusBymobile_addTask_board = status;
-    await setStatusToServer();
-    await getStatusFromServer();
+    saveStatusToSessionStorage(status);
     window.location.href = "addTask.html";
 }
 
