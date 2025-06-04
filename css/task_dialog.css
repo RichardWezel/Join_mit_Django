@@ -13,7 +13,11 @@
 
 
     .task_dialog {
-        /* width: 525px; */
+        
+
+        @media(max-width: 1086px) {
+            width: 525px;
+        }
         height: fit-content;
         border-radius: 30px;
         background-color: white;

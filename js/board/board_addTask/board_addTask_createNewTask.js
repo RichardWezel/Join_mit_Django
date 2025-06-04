@@ -14,6 +14,7 @@ let newTask_board = {
     "status": "toDo"
 };
 
+
 /**
  * Adds the status to newTask.status. 
  * It is used by the addTask buttons of the column header.
@@ -31,7 +32,7 @@ function addStatus(status) {
 async function validationOfAllInputs() {
     let titleInput = document.getElementById('input_title_addTask_dialog');
     let due_dateInput = document.getElementById('edit_input_due_date_addTask');
-    if (titleInput.value == '') {
+    if (titleInput.value.trim() === '') {
         window.location.hash='input_title_addTask_dialog';
         checkFormValidation_title_addTask();
     } else 
@@ -54,12 +55,25 @@ async function validationOfAllInputs() {
  * Initiates the creation of a new task.
  */
 async function initCreateNewTask() {
-    saveNewTask();
-    await tasks.push(newTask_board); // @storage.js:32
-    await getTasksOfServer(); // @board_main.js:498
+    try {
+    saveInputdataToNewTask_board();
+
+    // 👉 Vor dem Senden:
+    newTask_board.contact_ids = newTask_board.contacts;
+    delete newTask_board.contacts;
+
+    await createNewTask(newTask_board);
+    console.log('New task created:', newTask_board);
+    await getTasksOfServer();
+    console.log('Tasks fetched from server after creation:', tasks);
     await toastmessage();
     resetSettings();
-    await closeDialog(); // @board_dialog_taskdetails.js:25
+    await closeDialog();
+    await getTasksOfServer(); 
+    await renderColumnContent(); 
+    } catch (error) {
+        console.error("Fehler beim Erstellen der neuen Task:", error);
+    }
 }
 
 async function toastmessage() {
@@ -80,7 +94,7 @@ function closeToast() {
 /**
  * Calls the functions that store the inputs of the "addTask dialog" in the newTask JSON-array.
  */
-function saveNewTask() {
+function saveInputdataToNewTask_board() {
     title_newTask();
     description_newTask();
     category_newTask();
@@ -154,18 +168,15 @@ function category_newTask() {
  * Adds the contacts which are selected for the task to newTask.contacts.
  */
 function contacts_newTask() {
+    let selected_contacts = [];
     for (let i = 0; i < contacts_addTask.length; i++) {
         let contact = contacts_addTask[i];
         if (contact.select_status == true) {
-            newTask_board.contacts.push(
-            {
-                "firstName": contact.firstName,
-                "secondName": contact.secondName,
-                "color": contact.color
-            }
-            )
+            delete contact.select_status;
+            selected_contacts.push(contact.id);
         }
     }
+    newTask_board.contacts = selected_contacts;
 }
 
 /**
@@ -198,12 +209,3 @@ function subtasks_newTask() {
     }
 }
 
-/**
- * Sorts the task into "to do" if the task was added using the "add task" button. 
- * Otherwise the task will be added to the correct column via the openAddTaskDialog(status) function @board_addTask.js:3.
- */
-function status_newTask() {
-    if(!newTask_board.status == "toDo") {
-        newTask_board.status = "toDo";
-    }
-}

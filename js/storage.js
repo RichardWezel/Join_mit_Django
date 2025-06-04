@@ -228,26 +228,40 @@ function prepareTaskDataForSave(task) {
   };
 }
 
+async function deleteTaskAndUpdateTasks(taskId) {
+  await deleteTask(taskId);
+  await getTasksOfServer();
+  await closeDialog();
+  await getTasksOfServer(); 
+  await renderColumnContent(); 
 
+}
+  
 
 
 async function deleteTask(taskId) {
-  let taskIndex = taskId + 1; // Assuming taskId is zero-based and API expects one-based index
-  const url = `http://127.0.0.1:8000/api/tasks/${taskIndex}/`;
-  return fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  }).then(res => {
+  const url = `http://127.0.0.1:8000/api/tasks/${taskId}/`;
+
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
     if (!res.ok) {
       throw new Error(`Error while deleting the task: ${res.status}`);
     }
-    return res.json();
-  }).catch(err => {
+
+    return true;
+
+  } catch (err) {
     console.error('Error deleting task:', err);
-  });
+    return false;
+  }
 }
+
 
 async function createNewTask(taskData) {
   const url = `http://127.0.0.1:8000/api/tasks/`;
@@ -338,54 +352,6 @@ function sortContacts() {
       return 1;
     }
     return 0;
-  });
-}
-
-
-// ***** newTAsk status ***** //
-
-
-/**
- * Load the tasks JSON Array from Server in tasks[]
- */
-async function getNewTask_statusFromServer() {
-  const url = `http://127.0.0.1:8000/api/task_status/`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if (data.length === 0) {
-    console.warn('No task_status object found!');
-    return;
-  }
-  newTask_status = data[0].status;
-  return newTask_status;
-}
-
-/**
- * Saves the new task status to server.
- */
-async function saveNewTask_statusOnServer() {
-  const url = `http://127.0.0.1:8000/api/task_status/1/`;
-
-  if (typeof newTask_status !== "boolean") {
-    console.error("Invalid task_status:", newTask_status);
-    return;
-  }
-  return fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      status: newTask_status,
-    }),
-  }).then(res => {
-    if (!res.ok) {
-      return res.json().then(err => {
-        console.error("Backend error:", err);
-        throw new Error(`Error while saving the new_Task_status: ${res.status}`);
-      });
-    }
-    return res.json();
   });
 }
 

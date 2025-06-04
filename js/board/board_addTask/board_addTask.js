@@ -14,9 +14,8 @@ async function openAddTaskDialog(status){
     dialog_status = 'addTask';
     await renderAddTaskDialog();  
     container.classList.remove('d-none');
-    await getTasksOfServer();
     if(typeof status !== 'undefined') {
-        addStatus(status);
+        addStatus(status); // @board_addTask_createNewTask.js:23
     }
 }
 

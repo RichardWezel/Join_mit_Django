@@ -101,12 +101,15 @@ function validateInput(inputId, errortextId) {
  * Changes to board.html
  */
 async function createNewTaskInit() {
-  await saveNewTask();
-  await deleteNewTaskContent();
-  await removeAllInputes();
-  newTask_status = 'true';
-  await saveNewTask_statusOnServer();
-  changeWindow();
+  try {
+    await saveNewTask();
+    await deleteNewTaskContent();
+    await removeAllInputes();
+    newTask_status = 'true';
+    changeWindow();
+  } catch (error) {
+    console.error("Fehler beim Erstellen der neuen Task:", error);
+  }
 }
 
 /**
@@ -114,8 +117,15 @@ async function createNewTaskInit() {
  */
 async function saveNewTask() {
   await getAllSettingsOfNewTask();
+
+  // 👉 Vor dem Senden:
+  newTask.contact_ids = newTask.contacts;
+  delete newTask.contacts;
+
+
   await createNewTask(newTask);
-  await getTasksFromServer();
+  await getTasksOfServer();
+  
 }
 
 /**

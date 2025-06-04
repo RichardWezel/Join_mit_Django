@@ -39,13 +39,11 @@ async function init_board() {
  * Marks the adding of the new task.
  */
 async function toastMessageNewTask() {
-    await getNewTask_statusFromServer();
     if (newTask_status === true) {
         await openToastMessageAddTask();
         await timeout (1300);
         await closeToast();
         newTask_status = 'false';
-        await saveNewTask_statusOnServer();
     }
 }
   
